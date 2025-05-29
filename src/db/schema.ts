@@ -1,9 +1,15 @@
 import {
   boolean,
+  pgEnum,
   pgTable,
   text,
   timestamp
 } from "drizzle-orm/pg-core";
+
+import { 
+  generateInviteCode, 
+  generateOrganizationId 
+} from "@/lib/utils";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -49,4 +55,26 @@ export const verification = pgTable("verification", {
   expiresAt: timestamp("expiresAt").notNull(),
   createdAt: timestamp("createdAt").$defaultFn(() => new Date()),
   updatedAt: timestamp("updatedAt").$defaultFn(() => new Date()),
+});
+
+export const organization = pgTable("organization", {
+  id: text("id").primaryKey().$defaultFn(generateOrganizationId),
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  image: text("image"),
+  inviteCode: text("inviteCode").notNull().$defaultFn(generateInviteCode),
+  userId: text("userId").notNull().references(() => user.id, { onDelete: "cascade" }),
+  createdAt: timestamp("createdAt").$defaultFn(() => new Date()).notNull(),
+  updatedAt: timestamp("updatedAt").$defaultFn(() => new Date()).notNull(),
+});
+
+export const role = pgEnum("role", ["admin", "member"]);
+
+export const member = pgTable("member", {
+  id: text("id").primaryKey(),
+  role: role("role").default("member").notNull(),
+  userId: text("userId").notNull().references(() => user.id, { onDelete: "cascade" }),
+  organizationId: text("organizationId").notNull().references(() => organization.id, { onDelete: "cascade" }),
+  createdAt: timestamp("createdAt").$defaultFn(() => new Date()).notNull(),
+  updatedAt: timestamp("updatedAt").$defaultFn(() => new Date()).notNull(),
 });
