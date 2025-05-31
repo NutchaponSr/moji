@@ -1,8 +1,8 @@
+import { HomeView } from "@/modules/home/ui/views/home-view";
+
 const Page =  () => {
   return (
-    <div>
-      Home
-    </div>
+    <HomeView />
   );
 }
 

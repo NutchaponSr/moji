@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Sora } from "next/font/google";
 
 import "./globals.css";
+import { TRPCReactProvider } from "@/trpc/client";
+import { EdgeStoreProvider } from "@/lib/edgestore";
 
-const font = Inter({
+const font = Sora({
   subsets: ["latin"],
 });
 
@@ -20,7 +22,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${font.className} antialiased`}>
-        {children}
+        <TRPCReactProvider>
+          <EdgeStoreProvider>
+            {children}
+          </EdgeStoreProvider>
+        </TRPCReactProvider>
       </body>
     </html>
   );

@@ -33,7 +33,7 @@ export const protectedProcedure = t.procedure.use(async function isAuthed(opts) 
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
-  const user = db.query.user.findFirst({
+  const user = await db.query.user.findFirst({
     where: eq(users.id, ctx.session.user.id),
   });
 
@@ -43,7 +43,7 @@ export const protectedProcedure = t.procedure.use(async function isAuthed(opts) 
 
   return opts.next({
     ctx: {
-      ...ctx,
+      ...ctx.session,
       user,
     },
   });

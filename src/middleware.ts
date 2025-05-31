@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { auth } from "@/lib/auth";
 
-const authRoutes = ["/auth/sign-in", "/auth/sign-up"];
+const authRoutes = ["/auth/sign-in", "/auth/sign-up", "/auth/org"];
 
 export async function middleware(req: NextRequest) {
   const session = await auth.api.getSession({
@@ -12,8 +12,6 @@ export async function middleware(req: NextRequest) {
 
   const isLoggedIn = !!session;
   const isAuthRoute = authRoutes.includes(req.nextUrl.pathname);
-
-  console.log({ req })
 
   if (isAuthRoute) {
     if (isLoggedIn) {
