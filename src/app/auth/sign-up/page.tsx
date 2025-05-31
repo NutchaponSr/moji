@@ -3,7 +3,7 @@ import { AuthWrapper } from "@/modules/auth/ui/components/auth-wrapper";
 
 const Page = async () => {
   return (
-    <AuthWrapper title="Create a new account">
+    <AuthWrapper socials title="Create a new account">
       <SignUpView />
     </AuthWrapper>
   );

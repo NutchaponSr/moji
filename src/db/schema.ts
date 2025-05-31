@@ -5,6 +5,7 @@ import {
   text,
   timestamp
 } from "drizzle-orm/pg-core";
+import { createId as cuid } from "@paralleldrive/cuid2";
 
 import { 
   generateInviteCode, 
@@ -63,7 +64,7 @@ export const organization = pgTable("organization", {
   slug: text("slug").notNull().unique(),
   image: text("image"),
   inviteCode: text("inviteCode").notNull().$defaultFn(generateInviteCode),
-  userId: text("userId").notNull().references(() => user.id, { onDelete: "cascade" }),
+  createdBy: text("createdBy").notNull().references(() => user.id, { onDelete: "cascade" }),
   createdAt: timestamp("createdAt").$defaultFn(() => new Date()).notNull(),
   updatedAt: timestamp("updatedAt").$defaultFn(() => new Date()).notNull(),
 });
@@ -71,7 +72,7 @@ export const organization = pgTable("organization", {
 export const role = pgEnum("role", ["admin", "member"]);
 
 export const member = pgTable("member", {
-  id: text("id").primaryKey(),
+  id: text("id").primaryKey().$defaultFn(cuid),
   role: role("role").default("member").notNull(),
   userId: text("userId").notNull().references(() => user.id, { onDelete: "cascade" }),
   organizationId: text("organizationId").notNull().references(() => organization.id, { onDelete: "cascade" }),

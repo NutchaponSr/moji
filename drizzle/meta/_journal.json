@@ -8,6 +8,13 @@
       "when": 1748508286828,
       "tag": "0000_woozy_rictor",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1748527687264,
+      "tag": "0001_rainy_grandmaster",
+      "breakpoints": true
     }
   ]
 }

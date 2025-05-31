@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import { signIn, SignIn } from "@/modules/auth/schema";
+import { DEFAULT_REDIRECT } from "@/modules/auth/constants";
 
 export const SignInView = () => {
   const router = useRouter();
@@ -36,10 +37,10 @@ export const SignInView = () => {
   const onSubmit = async ({ ...data }: SignIn) => {
     await authClient.signIn.email({
       ...data,
-      callbackURL: callbackUrl || "/",
+      callbackURL: callbackUrl || DEFAULT_REDIRECT,
     }, {
       onSuccess: () => {
-        router.push(callbackUrl || "/");
+        router.push(callbackUrl || DEFAULT_REDIRECT);
       },
     });
   }

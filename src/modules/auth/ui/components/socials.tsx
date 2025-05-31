@@ -7,6 +7,8 @@ import { authClient } from "@/lib/auth-client";
 
 import { Button } from "@/components/ui/button";
 
+import { DEFAULT_REDIRECT } from "@/modules/auth/constants";
+
 export const Socials = () => {
   const searchParams = useSearchParams();
 
@@ -15,7 +17,7 @@ export const Socials = () => {
   const onSocial = async (provider: "google" | "github") => {
     await authClient.signIn.social({
       provider,
-      callbackURL: callbackUrl || "/",
+      callbackURL: callbackUrl || DEFAULT_REDIRECT,
     });
   }
 

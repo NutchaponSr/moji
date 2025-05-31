@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
 
+import { authClient } from "@/lib/auth-client";
+
 import { 
   Form, 
   FormControl, 
@@ -12,11 +14,11 @@ import {
   FormLabel,
   FormMessage
 } from "@/components/ui/form";
-
-import { signUp, SignUp } from "../../schema";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
+
+import { signUp, SignUp } from "@/modules/auth/schema";
+import { DEFAULT_REDIRECT } from "@/modules/auth/constants";
 
 export const SignUpView = () => {
   const router = useRouter();
@@ -37,10 +39,10 @@ export const SignUpView = () => {
   const onSubmit = async ({ ...data }: SignUp) => {
     await authClient.signUp.email({
       ...data,
-      callbackURL: callbackUrl || "/",
+      callbackURL: callbackUrl || DEFAULT_REDIRECT,
     }, {
       onSuccess: () => {
-        router.push(callbackUrl || "/");
+        router.push(callbackUrl || DEFAULT_REDIRECT);
       },
     });
   }

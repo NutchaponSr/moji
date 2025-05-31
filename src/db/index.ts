@@ -1,5 +1,8 @@
 import * as schema from "@/db/schema";
+import postgres from "postgres";
 
-import { drizzle } from "drizzle-orm/neon-http";
+import { drizzle } from "drizzle-orm/postgres-js";
 
-export const db = drizzle(process.env.DATABASE_URL!, { schema });
+const client = postgres(process.env.DATABASE_URL!);
+
+export const db = drizzle({ client, schema });
