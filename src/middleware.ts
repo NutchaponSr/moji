@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 import { auth } from "@/lib/auth";
+import { DEFAULT_REDIRECT } from "./modules/auth/constants";
 
 const authRoutes = ["/auth/sign-in", "/auth/sign-up", "/auth/org"];
 
@@ -21,7 +22,7 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(new URL(decodeURIComponent(callbackUrl), req.url));
       }
 
-      return NextResponse.redirect(new URL("/", req.url));
+      return NextResponse.redirect(new URL(DEFAULT_REDIRECT, req.url));
     }
 
     return NextResponse.next();

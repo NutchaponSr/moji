@@ -1,29 +1,27 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-import { 
-  Form,
-  FormControl, 
-  FormField, 
-  FormItem, 
-  FormLabel, 
-  FormMessage
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-
-import { organizationSchema, OrganizationSchema } from "@/modules/organization/schema";
-import { useMutation } from "@tanstack/react-query";
-import { useTRPC } from "@/trpc/client";
 import { toast } from "sonner";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
+
+import { useZodForm } from "@/hooks/use-zod-form";
+
+import { useTRPC } from "@/trpc/client";
+
 import { Button } from "@/components/ui/button";
-import { OrgImageUpload } from "../components/org-image-upload";
+
+import { FormGenerator } from "@/components/form-generator";
+
+import { OrgImageUpload } from "@/modules/organization/ui/components/org-image-upload";
+
+import { organizationSchema } from "@/modules/organization/schema";
 
 export const OrgView = () => {
   const trpc = useTRPC();
   const router = useRouter();
+
+  const { data } = useSuspenseQuery(trpc.organizations.getOne.queryOptions());
 
   const createOrganization = useMutation(trpc.organizations.create.mutationOptions({
     onSuccess: ({ organizationId }) => {
@@ -36,77 +34,53 @@ export const OrgView = () => {
     }
   }));
 
-  const form = useForm<OrganizationSchema>({
-    resolver: zodResolver(organizationSchema),
-    defaultValues: {
+  const { onFormSubmit, setValue, ...form } = useZodForm<typeof organizationSchema>(
+    organizationSchema,
+    createOrganization.mutate,
+    {
       name: "",
       slug: "",
-      image: null,
-    },
-  });
+      image: "",
+    }
+  );
 
-  const onSubmit = (data: OrganizationSchema) => {
-    createOrganization.mutate({ ...data });
-  }
+  useEffect(() => {
+    if (data) {
+      router.push(`/${data.organizationId}`);
+    }
+  }, [data, router]);
+
+  if (data) return null;
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="grid gap-3">
-          <div className="grid gap-3">
-            <FormField 
-              control={form.control}
-              name="image"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <OrgImageUpload field={field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField 
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="Moji"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="grid gap-3">
-            <FormField 
-              control={form.control}
-              name="slug"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Slug</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="moji"
-                      {...field}
-                      />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <Button type="submit" disabled={createOrganization.isPending}>
-            Create organization
-          </Button>
-        </div>
-      </form>
-    </Form>
+    <form 
+      onSubmit={onFormSubmit}
+      className="w-full flex flex-col gap-3"
+    >
+      <FormGenerator
+        name="image"
+        inputType="custom"
+        {...form}
+      >
+        <OrgImageUpload setValue={setValue} />
+      </FormGenerator>
+      <FormGenerator 
+        name="name"
+        label="Name"
+        inputType="input"
+        placeholder="Moji"
+        {...form}
+        />
+      <FormGenerator 
+        name="slug"
+        label="Slug"
+        inputType="input"
+        placeholder="moji"
+        {...form}
+      />
+      <Button type="submit">
+        Create organization
+      </Button>
+    </form>
   );
 }
