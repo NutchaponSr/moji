@@ -6,16 +6,15 @@ import { useEffect } from "react";
 import { Building2Icon, XIcon } from "lucide-react"
 import { useEdgeStore } from "@/lib/edgestore"
 import { useFileUpload } from "@/hooks/use-file-upload"
-import { ControllerRenderProps } from "react-hook-form"
-import { OrganizationSchema } from "@/modules/organization/schema"
+import { UseFormSetValue } from "react-hook-form"
 import { AnimatedCircularProgressBar } from "@/components/animated-circular-progress-bar"
 import { Button } from "@/components/ui/button";
 
 interface OrgImageUploadProps {
-  field: ControllerRenderProps<OrganizationSchema, "image">
+  setValue: UseFormSetValue<{ image: string | null; name: string; slug: string }>;
 }
 
-export const OrgImageUpload = ({ field }: OrgImageUploadProps) => {
+export const OrgImageUpload = ({ setValue }: OrgImageUploadProps) => {
   const { edgestore } = useEdgeStore();
 
   const [
@@ -63,7 +62,7 @@ export const OrgImageUpload = ({ field }: OrgImageUploadProps) => {
     if (state.files.length > 0) {
       const file = state.files[0];
       await removeAndDeleteFile(file.id);
-      field.onChange(null);
+      setValue("image", null);
     }
   }
 
@@ -72,9 +71,9 @@ export const OrgImageUpload = ({ field }: OrgImageUploadProps) => {
 
     if (file?.uploadedUrl) {
       setPreviousFileUrl(file.uploadedUrl);
-      field.onChange(file.uploadedUrl);
+      setValue("image", file.uploadedUrl);
     }
-  }, [state.files, setPreviousFileUrl, field]);
+  }, [state.files, setPreviousFileUrl, setValue]);
 
   useEffect(() => {
     const file = state.files[0]
@@ -103,6 +102,7 @@ export const OrgImageUpload = ({ field }: OrgImageUploadProps) => {
         ) : (
           <>
             <button
+              type="button"
               onClick={openFileDialog}
               onDragEnter={handleDragEnter}
               onDragLeave={handleDragLeave}

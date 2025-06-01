@@ -1,5 +1,8 @@
+import { FormSection } from "@/types/form";
 import { clsx, type ClassValue } from "clsx"
+import { FieldValues } from "react-hook-form";
 import { twMerge } from "tailwind-merge"
+import { z } from "zod";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -32,3 +35,9 @@ export function formatBytes(bytes: number, decimals = 2): string {
 
   return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + sizes[i];
 } 
+
+export function createZodSchema<T extends FieldValues>(sections: FormSection<T>[]) {
+  const schemaObject: Record<string, z.ZodTypeAny> = {};
+
+  sections.forEach
+}

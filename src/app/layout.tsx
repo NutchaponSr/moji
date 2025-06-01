@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { Sora } from "next/font/google";
+import { Inter } from "next/font/google";
 
 import "./globals.css";
 import { TRPCReactProvider } from "@/trpc/client";
 import { EdgeStoreProvider } from "@/lib/edgestore";
+import { Toaster } from "@/components/ui/sonner";
 
-const font = Sora({
+const font = Inter({
   subsets: ["latin"],
 });
 
@@ -25,6 +26,7 @@ export default function RootLayout({
         <TRPCReactProvider>
           <EdgeStoreProvider>
             {children}
+            <Toaster richColors position="top-center" />
           </EdgeStoreProvider>
         </TRPCReactProvider>
       </body>

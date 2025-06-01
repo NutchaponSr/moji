@@ -1,8 +1,5 @@
-
 import { Logo } from "@/components/logo";
 import { GridPattern } from "@/components/grid-pattern";
-
-import { SwitchAuth } from "@/modules/auth/ui/components/switch-auth";
 
 interface Props {
   children: React.ReactNode;
@@ -30,7 +27,6 @@ const Layout = ({ children }: Props) => {
         </div>
       </div>
       <div className="relative flex flex-1 shrink-0 flex-col items-center justify-center">
-        <SwitchAuth />
         {children}
       </div>
     </div>
