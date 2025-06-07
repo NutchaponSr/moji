@@ -5,6 +5,7 @@ import "./globals.css";
 import { TRPCReactProvider } from "@/trpc/client";
 import { EdgeStoreProvider } from "@/lib/edgestore";
 import { Toaster } from "@/components/ui/sonner";
+import { ModalProvider } from "@/providers/modal-provider";
 
 const font = Inter({
   subsets: ["latin"],
@@ -26,6 +27,7 @@ export default function RootLayout({
         <TRPCReactProvider>
           <EdgeStoreProvider>
             {children}
+            <ModalProvider />
             <Toaster richColors position="top-center" />
           </EdgeStoreProvider>
         </TRPCReactProvider>

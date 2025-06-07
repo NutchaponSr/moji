@@ -4,12 +4,12 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 import { getQueryClient, trpc } from "@/trpc/server";
 
-import { OrgView } from "@/modules/organization/ui/views/org-view";
 import { AuthWrapper } from "@/modules/auth/ui/components/auth-wrapper";
+import { OrgView } from "@/modules/organizations/ui/views/organization-view";
 
 const Page = async () => {
   const queryClient = getQueryClient();
-  void queryClient.fetchQuery(trpc.organizations.getOne.queryOptions());
+  void queryClient.prefetchQuery(trpc.organizations.getOne.queryOptions());
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

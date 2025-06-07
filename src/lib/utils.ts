@@ -1,21 +1,18 @@
-import { FormSection } from "@/types/form";
-import { clsx, type ClassValue } from "clsx"
-import { FieldValues } from "react-hook-form";
-import { twMerge } from "tailwind-merge"
-import { z } from "zod";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function generateInviteCode(length: number = 6) {
-  let inviteCode = "";
+export function generateInviteCode() {
+  const code = Array.from(
+    { length: 6 },
+    () => 
+      "0123456789abcdefghijklmnopqrstuvwxyz"[Math.floor(Math.random() * 36)]
+  ).join("");
 
-  for (let i = 0; i < length; i++) {
-    inviteCode += Math.floor(Math.random() * 10);
-  }
-
-  return inviteCode;
+  return code;
 }
 
 export function generateOrganizationId() {
@@ -36,8 +33,10 @@ export function formatBytes(bytes: number, decimals = 2): string {
   return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + sizes[i];
 } 
 
-export function createZodSchema<T extends FieldValues>(sections: FormSection<T>[]) {
-  const schemaObject: Record<string, z.ZodTypeAny> = {};
+export function generateInvokeId(prefix: string = "inv"): string {
+  const timestamp = new Date().toISOString().replace(/[-:.TZ]/g, ""); // e.g., 20250603T153045Z → 20250603153045
+  const randomBytes = crypto.getRandomValues(new Uint8Array(16));
+  const randomHex = Array.from(randomBytes, b => b.toString(16).padStart(2, "0")).join(""); // 32 hex chars
 
-  sections.forEach
+  return `${prefix}${timestamp}${randomHex}`;
 }

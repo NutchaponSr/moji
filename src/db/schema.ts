@@ -5,13 +5,10 @@ import {
   text,
   timestamp
 } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 import { createId as cuid } from "@paralleldrive/cuid2";
 
-import { 
-  generateInviteCode, 
-  generateOrganizationId 
-} from "@/lib/utils";
-import { relations } from "drizzle-orm";
+import { generateInviteCode, generateInvokeId, generateOrganizationId } from "@/lib/utils";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -59,18 +56,28 @@ export const verification = pgTable("verification", {
   updatedAt: timestamp("updatedAt").$defaultFn(() => new Date()),
 });
 
+export const plan = pgEnum("plan", ["free", "plus"]);
+
 export const organization = pgTable("organization", {
   id: text("id").primaryKey().$defaultFn(generateOrganizationId),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
   image: text("image"),
-  inviteCode: text("inviteCode").notNull().$defaultFn(generateInviteCode),
+  plan: plan("plan").default("free").notNull(),
   createdBy: text("createdBy").notNull().references(() => user.id, { onDelete: "cascade" }),
   createdAt: timestamp("createdAt").$defaultFn(() => new Date()).notNull(),
   updatedAt: timestamp("updatedAt").$defaultFn(() => new Date()).notNull(),
 });
 
-export const role = pgEnum("role", ["admin", "member"]);
+export const role = pgEnum("role", ["admin", "member", "guest"]);
+
+export const invitation = pgTable("invitation", {
+  id: text("id").primaryKey().$defaultFn(generateInvokeId),
+  inviteCode: text("inviteCode").notNull().$defaultFn(generateInviteCode),
+  role: role("role").notNull(),
+  organizationId: text("organizationId").notNull().references(() => organization.id, { onDelete: "cascade" }),
+  createdAt: timestamp("createdAt").$defaultFn(() => new Date()).notNull(),
+});
 
 export const member = pgTable("member", {
   id: text("id").primaryKey().$defaultFn(cuid),
@@ -108,6 +115,7 @@ export const organizationRelations = relations(organization, ({ one, many }) => 
     references: [user.id],
   }),
   members: many(member),
+  invitations: many(invitation),
 }));
 
 export const memberRelations = relations(member, ({ one }) => ({
@@ -117,6 +125,13 @@ export const memberRelations = relations(member, ({ one }) => ({
   }),
   organization: one(organization, {
     fields: [member.organizationId],
+    references: [organization.id],
+  }),
+}));
+
+export const invitationRelations = relations(invitation, ({ one }) => ({
+  organization: one(organization, {
+    fields: [invitation.organizationId],
     references: [organization.id],
   }),
 }));
