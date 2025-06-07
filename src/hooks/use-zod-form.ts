@@ -20,7 +20,7 @@ export const useZodForm = <T extends ZodSchema>(
     defaultValues,
   });
 
-  const onFormSubmit = handleSubmit(async (values) => console.table(values)) 
+  const onFormSubmit = handleSubmit(async (values) => mutation({ ...values })); 
 
   return {
     register,
