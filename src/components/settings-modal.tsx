@@ -5,23 +5,12 @@ import {
   DialogContent, 
   DialogHidden
 } from "@/components/ui/dialog";
-import { SettingSidebar } from "./settings-sidebar";
-import { PeopleContent } from "./people-content";
-import { useQuery } from "@tanstack/react-query";
-import { useTRPC } from "@/trpc/client";
-import { useParams } from "next/navigation";
+
+import { PeopleContent } from "@/components/people-content";
+import { SettingSidebar } from "@/components/settings-sidebar";
 
 export const SettingsModal = () => {
-  const trpc = useTRPC();
-  const params = useParams<{ organizationId: string }>();
-
   const { open, onClose } = useSettingsModal();
-  const { 
-    data: organization, 
-    isLoading 
-  } = useQuery(trpc.organizations.current.queryOptions({ organizationId: params.organizationId }));
-
-  if (isLoading || !organization) return null;
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -31,7 +20,7 @@ export const SettingsModal = () => {
           <SettingSidebar />
           <div role="tabpanel" className="grow h-full max-h-[715px] overflow-hidden rounded-r-lg">
             <div className="flex flex-col w-full h-full bg-background">
-              <PeopleContent organization={organization} />
+              <PeopleContent />
             </div>
           </div>
         </div>  

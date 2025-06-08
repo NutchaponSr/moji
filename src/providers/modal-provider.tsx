@@ -1,7 +1,8 @@
 "use client";
 
-import { SettingsModal } from "@/components/settings-modal";
 import { useEffect, useState } from "react";
+
+import { SettingsModal } from "@/components/settings-modal";
 
 
 export const ModalProvider = () => {

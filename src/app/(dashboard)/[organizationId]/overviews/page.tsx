@@ -1,6 +1,8 @@
-import { OrganizationButton } from "@/modules/organizations/ui/components/organization-button";
-import { getQueryClient, trpc } from "@/trpc/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+
+import { getQueryClient, trpc } from "@/trpc/server";
+
+import { OrganizationButton } from "@/modules/organizations/ui/components/organization-button";
 
 interface Props {
   params: Promise<{ organizationId: string }>;

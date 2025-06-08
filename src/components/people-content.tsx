@@ -1,34 +1,49 @@
-import { useSettingsModal } from "@/store/use-settings-modal";
-import { Button } from "./ui/button";
-import { Organization } from "@/modules/organizations/types";
-import { RoleDropdown } from "@/modules/organizations/ui/components/role-dropdown";
+import { 
+  useMutation, 
+  useQueryClient, 
+  useSuspenseQuery 
+} from "@tanstack/react-query";
+import { 
+  flexRender, 
+  getCoreRowModel, 
+  getFilteredRowModel, 
+  useReactTable 
+} from "@tanstack/react-table";
 import { useState } from "react";
-import { role } from "@/db/schema"
-import { cn } from "@/lib/utils";
-import { flexRender, getCoreRowModel, getFilteredRowModel, useReactTable } from "@tanstack/react-table";
-import { columns as invitationColumns } from "@/modules/invitations/ui/components/invitation-columns";
-import { columns as memberColumns } from "@/modules/members/ui/components/member-columns";
 import { SearchIcon } from "lucide-react";
 import { Icon } from "@iconify-icon/react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
+
+import { cn } from "@/lib/utils";
+
+import { role } from "@/db/schema"
+
 import { useTRPC } from "@/trpc/client";
+import { useAccess } from "@/hooks/use-access";
+import { useSettingsModal } from "@/store/use-settings-modal";
 
-interface Props {
-  organization: Organization;
-}
+import { Button } from "@/components/ui/button";
 
-export const PeopleContent = ({ organization }: Props) => {
+import { memberColumns } from "@/modules/members/ui/components/member-columns";
+import { RoleDropdown } from "@/modules/organizations/ui/components/role-dropdown";
+import { invitationColumns } from "@/modules/invitations/ui/components/invitation-columns";
+
+export const PeopleContent = () => {
   const { type } = useSettingsModal();
 
   const trpc = useTRPC();
+  const params = useParams<{ organizationId: string }>();
   const queryClient = useQueryClient();
   
-  const [isFocused, setIsFocused] = useState(false);
-  const [memberGlobalFilter, setMemberGlobalFilter] = useState("");
+  const { data: organization } = useSuspenseQuery(trpc.organizations.current.queryOptions({ organizationId: params.organizationId }));
 
-  const [roleBase, setRoleBase] = useState<typeof role.enumValues[number]>("member");
+  const { canView } = useAccess();
 
   const createLink = useMutation(trpc.invitations.create.mutationOptions());
+
+  const [isFocused, setIsFocused] = useState(false);
+  const [memberGlobalFilter, setMemberGlobalFilter] = useState("");
+  const [roleBase, setRoleBase] = useState<typeof role.enumValues[number]>("member");
 
   const table = useReactTable({
     data: organization.invitations,
@@ -62,102 +77,109 @@ export const PeopleContent = ({ organization }: Props) => {
 
   return (
     <div className="grow py-9 px-15 flex flex-col overflow-auto">
-      <div className="flex flex-col">
-        <div className="flex items-center justify-between pb-3 mb-4 border-b-2 border-dotted">
-          <h2 className="text-base font-medium text-primary">
-            Share link
-          </h2>
-        </div>
-        <div className="flex flex-col gap-4.5">
-          <div className="flex items-center">
-            <div className="space-x-2 grow">
-              <h3 className="text-sm text-primary font-normal w-auto mb-px">
-                Role
-              </h3>
-              <p className="text-xs text-[#73726e] w-[85%] leading-4">
-                access to anyone who open it.
-              </p>
+      {canView() && (
+        <>
+          <div className="flex flex-col">
+            <div className="flex items-center justify-between pb-3 mb-4 border-b-2 border-dotted">
+              <h2 className="text-base font-medium text-primary">
+                Share link
+              </h2>
             </div>
-
-            <RoleDropdown roleBase={roleBase} onChange={(role) => setRoleBase(role)} />
-          </div>
-          <div className="flex items-center">
-            <div className="space-x-2 grow">
-              <h3 className="text-sm text-primary font-normal w-auto mb-px">
-                Invite link to add member
-              </h3>
-              <p className="text-xs text-[#73726e] w-[85%] leading-4">
-              Only people with permission to invite members can see this.
-              </p>
-            </div>
-
-            <Button 
-              variant="primary" 
-              onClick={handleGenerateLink}
-              disabled={organization.invitations.length >= 2}
-            >
-              Generate
-            </Button>
-          </div>
-
-          <div className="text-sm text-primary leading-5 whitespace-nowrap overflow-hidden text-ellipsis font-medium flex h-7 items-center">
-            Invite links
-          </div>
-
-          <table className="w-full text-xs border-y border-primary/9">
-            <thead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id} className="h-8 w-full">
-                  {headerGroup.headers.map((header) => (
-                    <th
-                      key={header.id}
-                      className="font-normal text-left px-2"
-                      style={{ width: header.column.columnDef.meta?.width }}
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(header.column.columnDef.header,header.getContext())
-                      }
-                    </th>
+            <div className="flex flex-col gap-4.5">
+              <div className="flex items-center">
+                <div className="space-x-2 grow">
+                  <h3 className="text-sm text-primary font-normal w-auto mb-px">
+                    Role
+                  </h3>
+                  <p className="text-xs text-[#73726e] w-[85%] leading-4">
+                    access to anyone who open it.
+                  </p>
+                </div>
+    
+                <RoleDropdown roleBase={roleBase} onChange={(role) => setRoleBase(role)} />
+              </div>
+              <div className="flex items-center">
+                <div className="space-x-2 grow">
+                  <h3 className="text-sm text-primary font-normal w-auto mb-px">
+                    Invite link to add member
+                  </h3>
+                  <p className="text-xs text-[#73726e] w-[85%] leading-4">
+                  Only people with permission to invite members can see this.
+                  </p>
+                </div>
+    
+                <Button 
+                  variant="primary" 
+                  onClick={handleGenerateLink}
+                  disabled={organization.invitations.length >= 2}
+                >
+                  Generate
+                </Button>
+              </div>
+    
+              <div className="text-sm text-primary leading-5 whitespace-nowrap overflow-hidden text-ellipsis font-medium flex h-7 items-center">
+                Invite links
+              </div>
+    
+              <table className="w-full text-xs border-y border-primary/9">
+                <thead>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <tr key={headerGroup.id} className="h-8 w-full">
+                      {headerGroup.headers.map((header) => (
+                        <th
+                          key={header.id}
+                          className="font-normal text-left px-2"
+                          style={{ width: header.column.columnDef.meta?.width }}
+                        >
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(header.column.columnDef.header,header.getContext())
+                          }
+                        </th>
+                      ))}
+                    </tr>
                   ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody>
-              {table.getRowModel().rows.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <tr key={row.id} className="w-full border-t border-primary/9">
-                    {row.getVisibleCells().map((cell) => (
-                      <td
-                        key={cell.id}
-                        className="py-2 h-11 px-2"
+                </thead>
+                <tbody>
+                  {table.getRowModel().rows.length ? (
+                    table.getRowModel().rows.map((row) => (
+                      <tr key={row.id} className="w-full border-t border-primary/9">
+                        {row.getVisibleCells().map((cell) => (
+                          <td
+                            key={cell.id}
+                            className="py-2 h-11 px-2"
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td 
+                        colSpan={table.getAllColumns().length} 
+                        className="text-xs text-[#73726e] leading-4 whitespace-nowrap overflow-hidden text-ellipsis h-8 px-1 py-2 border-t border-primary/9"
                       >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
+                        No links
                       </td>
-                    ))}
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td 
-                    colSpan={table.getAllColumns().length} 
-                    className="text-xs text-[#73726e] leading-4 whitespace-nowrap overflow-hidden text-ellipsis h-8 px-1 py-2 border-t border-primary/9"
-                  >
-                    No links
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div className="h-10 w-full" />
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div className="h-10 w-full" />
+        </>
+      )}
       <div className="flex items-center justify-between pb-3 mb-4 border-b-2 border-dotted">
         <h2 className="text-base font-medium text-primary">
           People
+          <span className="text-[#46444073] leading-4.5 pl-1 text-sm">
+            {organization.members.length}
+          </span>
         </h2>
 
         <label className={cn(

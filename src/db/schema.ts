@@ -3,10 +3,10 @@ import {
   pgEnum,
   pgTable,
   text,
-  timestamp
+  timestamp,
+  primaryKey
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { createId as cuid } from "@paralleldrive/cuid2";
 
 import { generateInviteCode, generateInvokeId, generateOrganizationId } from "@/lib/utils";
 
@@ -80,13 +80,14 @@ export const invitation = pgTable("invitation", {
 });
 
 export const member = pgTable("member", {
-  id: text("id").primaryKey().$defaultFn(cuid),
-  role: role("role").default("member").notNull(),
   userId: text("userId").notNull().references(() => user.id, { onDelete: "cascade" }),
   organizationId: text("organizationId").notNull().references(() => organization.id, { onDelete: "cascade" }),
+  role: role("role").default("member").notNull(),
   createdAt: timestamp("createdAt").$defaultFn(() => new Date()).notNull(),
   updatedAt: timestamp("updatedAt").$defaultFn(() => new Date()).notNull(),
-});
+}, (table) => ({
+  pk: primaryKey({ columns: [table.userId, table.organizationId] }),
+}));
 
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),

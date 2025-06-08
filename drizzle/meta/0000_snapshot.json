@@ -1,5 +1,5 @@
 {
-  "id": "0e36aed8-318d-4e9b-a234-3f7db286f1bd",
+  "id": "f6705134-5a69-4d5f-9137-08b3b6534c46",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -109,8 +109,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.member": {
-      "name": "member",
+    "public.invitation": {
+      "name": "invitation",
       "schema": "",
       "columns": {
         "id": {
@@ -119,14 +119,58 @@
           "primaryKey": true,
           "notNull": true
         },
+        "inviteCode": {
+          "name": "inviteCode",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
         "role": {
           "name": "role",
           "type": "role",
           "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true,
-          "default": "'member'"
+          "notNull": true
         },
+        "organizationId": {
+          "name": "organizationId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "invitation_organizationId_organization_id_fk": {
+          "name": "invitation_organizationId_organization_id_fk",
+          "tableFrom": "invitation",
+          "tableTo": "organization",
+          "columnsFrom": [
+            "organizationId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.member": {
+      "name": "member",
+      "schema": "",
+      "columns": {
         "userId": {
           "name": "userId",
           "type": "text",
@@ -138,6 +182,14 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'member'"
         },
         "createdAt": {
           "name": "createdAt",
@@ -181,7 +233,15 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "member_userId_organizationId_pk": {
+          "name": "member_userId_organizationId_pk",
+          "columns": [
+            "userId",
+            "organizationId"
+          ]
+        }
+      },
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
@@ -215,14 +275,16 @@
           "primaryKey": false,
           "notNull": false
         },
-        "inviteCode": {
-          "name": "inviteCode",
-          "type": "text",
+        "plan": {
+          "name": "plan",
+          "type": "plan",
+          "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'free'"
         },
-        "userId": {
-          "name": "userId",
+        "createdBy": {
+          "name": "createdBy",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -242,12 +304,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "organization_userId_user_id_fk": {
-          "name": "organization_userId_user_id_fk",
+        "organization_createdBy_user_id_fk": {
+          "name": "organization_createdBy_user_id_fk",
           "tableFrom": "organization",
           "tableTo": "user",
           "columnsFrom": [
-            "userId"
+            "createdBy"
           ],
           "columnsTo": [
             "id"
@@ -467,12 +529,21 @@
     }
   },
   "enums": {
+    "public.plan": {
+      "name": "plan",
+      "schema": "public",
+      "values": [
+        "free",
+        "plus"
+      ]
+    },
     "public.role": {
       "name": "role",
       "schema": "public",
       "values": [
         "admin",
-        "member"
+        "member",
+        "guest"
       ]
     }
   },

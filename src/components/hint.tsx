@@ -1,6 +1,10 @@
 "use client";
 
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { 
+  Tooltip, 
+  TooltipContent, 
+  TooltipTrigger 
+} from "@/components/ui/tooltip";
 
 interface Props {
   label: string;

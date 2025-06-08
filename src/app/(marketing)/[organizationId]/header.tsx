@@ -1,14 +1,15 @@
+import Link from "next/link";
+
 import { ScrollBar } from "./scroll-bar";
 
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 import { Logo } from "@/components/logo";
 
 import { SignedIn } from "@/modules/auth/ui/components/signed-in";
-import { OrganizationSwitcher } from "@/modules/organizations/ui/components/organization-switcher";
 import { UserButton } from "@/modules/auth/ui/components/user-button";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { OrganizationSwitcher } from "@/modules/organizations/ui/components/organization-switcher";
 
 interface Props {
   organizationId: string;

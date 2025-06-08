@@ -1,5 +1,4 @@
 export type Member = {
-  id: string;
   createdAt: Date;
   updatedAt: Date;
   userId: string;

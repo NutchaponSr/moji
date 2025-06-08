@@ -1,7 +1,8 @@
 "use client";
 
-import { Hint } from "@/components/hint";
 import { useState } from "react";
+
+import { Hint } from "@/components/hint";
 
 interface Props {
   invitationId: string;
