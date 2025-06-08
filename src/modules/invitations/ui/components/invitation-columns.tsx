@@ -1,13 +1,13 @@
 import { formatDistanceToNow } from "date-fns";
 import { ColumnDef } from "@tanstack/react-table";
 
-import { InviteLink } from "./invite-link";
-import { InviteCode } from "./invite-code";
-import { InviteRole } from "./invite-role";
+import { InviteCode } from "@/modules/invitations/ui/components/invite-code";
+import { InviteLink } from "@/modules/invitations/ui/components/invite-link";
+import { InviteRole } from "@/modules/invitations/ui/components/invite-role";
 
-import { Invitation } from "../../types";
+import { InvitationWithoutOrganization } from "@/modules/invitations/types";
 
-export const columns: ColumnDef<Invitation>[] = [
+export const invitationColumns: ColumnDef<InvitationWithoutOrganization>[] = [
   {
     id: "link",
     header: () => (

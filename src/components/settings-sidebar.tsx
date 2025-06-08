@@ -1,6 +1,8 @@
 import { useSettingsModal } from "@/store/use-settings-modal";
-import { MenuItem } from "./menu-item";
-import { Separator } from "./ui/separator";
+
+import { Separator } from "@/components/ui/separator";
+
+import { MenuItem } from "@/components/menu-item";
 
 export const SettingSidebar = () => {
   const { type, onChange } = useSettingsModal();
@@ -12,6 +14,11 @@ export const SettingSidebar = () => {
           <h3 className="text-xs leading-none mb-px text-[#73726e] font-semibold flex h-6 px-2 text-ellipsis overflow-hidden">
             Account
           </h3>
+          <MenuItem 
+            icon="solar:user-circle-outline"
+            label="Account"
+            onOpen={() => {}}
+          />
           <MenuItem 
             icon="solar:tuning-2-outline"
             label="Preferences"

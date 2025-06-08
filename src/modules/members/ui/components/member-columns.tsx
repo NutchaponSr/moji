@@ -1,10 +1,13 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Member } from "../../types";
-import { ImageAvatar } from "@/components/image-avatar";
-import { ChevronDownIcon, MoreHorizontalIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
-export const columns: ColumnDef<Member>[] = [
+import { ImageAvatar } from "@/components/image-avatar";
+
+import { MemberRole } from "@/modules/members/ui/components/member-role";
+import { MemberActions } from "@/modules/members/ui/components/member-actions";
+
+import { Member } from "@/modules/members/types";
+
+export const memberColumns: ColumnDef<Member>[] = [
   {
     id: "user",
     header: () => (
@@ -59,22 +62,22 @@ export const columns: ColumnDef<Member>[] = [
     ),
     cell: ({ row }) => (
       <div className="text-sm text-primary min-h-10.5 max-h-13 flex items-center h-full">
-        <button className="transition inline-flex items-center h-7 px-2 rounded-sm whitespace-nowrap text-sm leading-[1.2] text-[#73726e] max-w-[148px] hover:bg-primary/6 gap-1">
-          <span className="whitespace-nowrap text-ellipsis overflow-hidden first-letter:uppercase">
-            {row.original.role}
-          </span>
-          <ChevronDownIcon className="text-[#c7c7c5] size-3.5" />
-        </button>
+        <MemberRole 
+          organizationId={row.original.organizationId}
+          userId={row.original.userId}
+          role={row.original.role}
+        />
       </div>
     )
   },
   {
     id: "action",
-    cell: () => (
+    cell: ({ row }) => (
       <div className="flex justify-center items-center">
-        <Button size="icon" variant="ghost">
-          <MoreHorizontalIcon />
-        </Button>
+        <MemberActions 
+          organizationId={row.original.organizationId}
+          userId={row.original.userId}
+        />
       </div>
     ),
     meta: {

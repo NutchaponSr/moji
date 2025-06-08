@@ -1,14 +1,27 @@
 "use client";
 
+import { useState } from "react";
+import { Icon } from "@iconify-icon/react";
+import { MoreHorizontalIcon, Trash2Icon } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import { role } from "@/db/schema";
 
 import { useTRPC } from "@/trpc/client";
 
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import {  MoreHorizontalIcon, Trash2Icon } from "lucide-react";
+import { ROLE_OPTIONS } from "@/types/role";
+
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuPortal, 
+  DropdownMenuSub, 
+  DropdownMenuSubContent, 
+  DropdownMenuSubTrigger, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
 
 interface Props {
   invitationId: string;
@@ -19,7 +32,7 @@ interface Props {
 export const InviteRole = ({ 
   invitationId, 
   organizationId,
-  role 
+  role: initialRole 
 }: Props) => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
@@ -27,18 +40,21 @@ export const InviteRole = ({
   const changeRole = useMutation(trpc.invitations.role.mutationOptions());
   const deleteLink = useMutation(trpc.invitations.delete.mutationOptions());
 
-  const [roleBase, setRoleBase] = useState(role);
+  const [roleBase, setRoleBase] = useState(initialRole);
 
-  const onChange = () => {
-    changeRole.mutate({ 
-      role: roleBase,
-      invitationId
-    }, {
-      onSuccess: () => {
-        queryClient.invalidateQueries(trpc.organizations.current.queryOptions({ organizationId }));
-      },
-    });
-  }
+  const handleRoleChange = (newRole: typeof role.enumValues[number]) => {
+    setRoleBase(newRole);
+    setTimeout(() => {
+      changeRole.mutate({ 
+        invitationId,
+        role: newRole,
+      }, {
+        onSuccess: () => {
+          queryClient.invalidateQueries(trpc.organizations.current.queryOptions({ organizationId }));
+        },
+      });
+    }, 50);
+  };
 
   return (
     <DropdownMenu>
@@ -47,37 +63,32 @@ export const InviteRole = ({
           <MoreHorizontalIcon />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="w-40">
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             Role
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent className="w-60">
-            <DropdownMenuItem 
-              onClick={() => {
-                setRoleBase("admin");
-                setTimeout(() => onChange(), 50);
-              }}
-              className="flex flex-col items-start gap-0 leading-[120%] text-sm"
-            >
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis font-medium">Admin</p>
-              <p className="text-xs">
-                Can create and edit workspaces and invite new members to organization
-              </p>
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              onClick={() => {
-                setRoleBase("member");
-                setTimeout(() => onChange(), 50);
-              }}
-              className="flex flex-col items-start gap-0 leading-[120%] text-sm"
-            >
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis font-medium">Member</p>
-              <p className="text-xs">
-                Only can do form that be admited
-              </p>
-            </DropdownMenuItem>
+            {ROLE_OPTIONS.map((role) => (
+              <DropdownMenuItem 
+                key={role.value}
+                onClick={() => handleRoleChange(role.value)}
+                className="h-auto hover:bg-accent"
+              >
+                <div className="flex items-center gap-2 leading-[120%] select-none min-h-7 w-full text-sm">
+                  <div className="flex-1">
+                    <div className="whitespace-nowrap overflow-hidden text-ellipsis">
+                      {role.label}
+                    </div>
+                    <div className="mt-1 text-xs text-muted-foreground break-words">
+                      {role.description}
+                    </div>
+                  </div>
+                  {roleBase === role.value && <Icon icon="game-icons:check-mark" className="ml-auto self-start size-3" />}
+                </div>
+              </DropdownMenuItem>
+            ))}
             </DropdownMenuSubContent>
           </DropdownMenuPortal>
         </DropdownMenuSub>

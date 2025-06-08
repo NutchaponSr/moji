@@ -1,6 +1,9 @@
+import { Icon } from "@iconify-icon/react";
 import { ChevronDownIcon } from "lucide-react";
 
 import { role } from "@/db/schema";
+
+import { ROLE_OPTIONS } from "@/types/role";
 
 import { 
   DropdownMenu, 
@@ -31,24 +34,25 @@ export const RoleDropdown = ({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-60">
-        <DropdownMenuItem 
-          onClick={() => onChange("admin")}
-          className="flex flex-col items-start gap-0 leading-[120%] text-sm"
-        >
-          <p className="whitespace-nowrap overflow-hidden text-ellipsis font-medium">Admin</p>
-          <p className="text-xs">
-            Can create and edit workspaces and invite new members to organization
-          </p>
-        </DropdownMenuItem>
-        <DropdownMenuItem 
-          onClick={() => onChange("member")}
-          className="flex flex-col items-start gap-0 leading-[120%] text-sm"
-        >
-          <p className="whitespace-nowrap overflow-hidden text-ellipsis font-medium">Member</p>
-          <p className="text-xs">
-            Only can do form that be admited
-          </p>
-        </DropdownMenuItem>
+        {ROLE_OPTIONS.map((role) => (
+          <DropdownMenuItem 
+            key={role.value}
+            onClick={() => onChange(role.value)}
+            className="h-auto hover:bg-accent"
+          >
+            <div className="flex items-center gap-2 leading-[120%] select-none min-h-7 w-full text-sm">
+              <div className="flex-1">
+                <div className="whitespace-nowrap overflow-hidden text-ellipsis">
+                  {role.label}
+                </div>
+                <div className="mt-1 text-xs text-muted-foreground break-words">
+                  {role.description}
+                </div>
+              </div>
+              {roleBase === role.value && <Icon icon="game-icons:check-mark" className="ml-auto self-start size-3" />}
+            </div>
+          </DropdownMenuItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );

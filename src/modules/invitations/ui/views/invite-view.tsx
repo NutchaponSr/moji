@@ -1,16 +1,19 @@
 "use client";
 
+import Link from "next/link";
 import VerificationInput from "react-verification-input";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 
-import { useTRPC } from "@/trpc/client";
 import { cn } from "@/lib/utils";
-import { useRouter } from "next/navigation";
+
+import { useTRPC } from "@/trpc/client";
+
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+
 import { DEFAULT_REDIRECT } from "@/modules/auth/constants";
-import { useState } from "react";
 
 interface Props {
   invitationId: string;
@@ -68,8 +71,8 @@ export const InviteView = ({ invitationId }: Props) => {
             characterFilled: "bg-white text-black",
           }}
         />
-        {join.isError && (
-          <p className="text-xs text-destructive text-center">
+        {error && (
+          <p className="text-sm text-[#eb5757] text-center underline">
             {error}
           </p>
         )}
