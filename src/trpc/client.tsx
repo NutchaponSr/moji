@@ -43,6 +43,11 @@ export const TRPCReactProvider = ({ children }: Readonly<{ children: React.React
         httpBatchLink({
           transformer: superjson,
           url: getUrl(),
+          headers() {
+            return {
+              cookie: document.cookie,
+            };
+          },
         }),
       ],
     }),

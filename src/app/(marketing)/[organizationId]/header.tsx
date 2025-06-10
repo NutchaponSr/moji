@@ -34,7 +34,7 @@ export const Header = async ({ organizationId }: Props) => {
           </div>
         </div>
         <SignedIn>
-          <UserButton organizationId={organizationId} />
+          <UserButton />
         </SignedIn>
       </div>
       <ScrollBar />

@@ -1,27 +1,36 @@
 "use client";
 
-import { LoaderIcon } from "lucide-react";
+import { ContrastIcon, LoaderIcon, Settings2Icon } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
-import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { authClient } from "@/lib/auth-client";
-import { useTRPC } from "@/trpc/client";
+
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuPortal, 
+  DropdownMenuSeparator, 
+  DropdownMenuSub, 
+  DropdownMenuSubContent, 
+  DropdownMenuSubTrigger, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+
 import { ImageAvatar } from "@/components/image-avatar";
-import { ProfilePopover } from "@/modules/shared/components/profile-popover";
+
 import { SIGN_IN_URL } from "@/modules/auth/constants";
+import { useSettingsModal } from "@/store/use-settings-modal";
 
-interface Props {
-  organizationId: string;
-}
-
-export const UserButton = ({ organizationId }: Props) => {
-  const trpc = useTRPC();
+export const UserButton = () => {
   const router = useRouter();
   const pathname = usePathname();
 
+  const { onOpen } = useSettingsModal();
+
   const callbackUrl = encodeURIComponent(pathname);
 
-  const { data: organizations } = useSuspenseQuery(trpc.organizations.getMany.queryOptions());
   const { data: session, isPending } = authClient.useSession();
 
   const handleLogout = () => {
@@ -39,22 +48,45 @@ export const UserButton = ({ organizationId }: Props) => {
   if (!session || !session.user.image) return null;
 
   return (
-    <ProfilePopover
-      trigger={
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
         <button className="border rounded-full">
           <ImageAvatar 
             name={session.user.name}
             src={session.user.image}
           />
         </button>
-      }
-      title={session.user.name}
-      subtitle={session.user.email}
-      image={session.user.image}
-      organizations={organizations}
-      currentOrganizationId={organizationId}
-      onLogout={handleLogout}
-      align="end"
-    />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="p-0">
+        <DropdownMenuLabel className="flex flex-col gap-0.5 px-3 py-1.5 border-b">
+          <span className="font-medium">{session.user.name}</span>
+          <span className="text-[#666] text-xs">{session.user.email}</span>
+        </DropdownMenuLabel>
+        <DropdownMenuItem onClick={onOpen} className="rounded-none px-3 py-1.5">
+          <Settings2Icon />
+          Settings
+        </DropdownMenuItem>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger className="rounded-none px-3 py-1.5 flex items-center gap-2">
+            <ContrastIcon className="size-4" />
+            Theme
+          </DropdownMenuSubTrigger>
+          <DropdownMenuPortal>
+            <DropdownMenuSubContent className="p-0 min-w-24" sideOffset={6}>
+              <DropdownMenuItem className="rounded-none px-3 py-1.5">
+                Light
+              </DropdownMenuItem>
+              <DropdownMenuItem className="rounded-none px-3 py-1.5">
+                Dark
+              </DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuPortal>
+        </DropdownMenuSub>
+        <DropdownMenuSeparator className="my-0" />
+        <DropdownMenuItem onClick={handleLogout} className="rounded-t-none px-3 py-1.5">
+          Logout
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };

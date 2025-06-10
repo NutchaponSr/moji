@@ -20,6 +20,17 @@ export const memberProcedure = createTRPCRouter({
 
       return mem;
     }),
+  getMany: protectedProcedure
+    .query(async ({ ctx }) => {
+      const members = await db.query.member.findMany({
+        where: eq(member.userId, ctx.user.id),
+        with: {
+          organization: true
+        }
+      });
+
+      return members.map(membership => membership.organization);
+    }),
   check: protectedProcedure
     .input(
       z.object({
