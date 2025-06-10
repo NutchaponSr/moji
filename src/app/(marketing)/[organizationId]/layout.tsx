@@ -17,7 +17,7 @@ const Layout = async ({ children, params }: Props) => {
 
   const queryClient = getQueryClient();
 
-  void queryClient.prefetchQuery(trpc.organizations.getMany.queryOptions());
+  void queryClient.prefetchQuery(trpc.members.getMany.queryOptions());
   void queryClient.prefetchQuery(trpc.organizations.current.queryOptions({ organizationId }));
 
   return (

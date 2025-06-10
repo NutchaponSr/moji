@@ -7,6 +7,7 @@ import {
   primaryKey
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
+import { createId } from "@paralleldrive/cuid2";
 
 import { generateInviteCode, generateInvokeId, generateOrganizationId } from "@/lib/utils";
 
@@ -89,6 +90,21 @@ export const member = pgTable("member", {
   pk: primaryKey({ columns: [table.userId, table.organizationId] }),
 }));
 
+export const group = pgTable("group", {
+  id: text("id").primaryKey().$defaultFn(createId),
+  name: text("name").notNull().$default(() => "Untitled"),
+  icon: text("icon").$default(() => "lucide:file"),
+  cover: text("cover"),
+  year: text("year").notNull(),
+  isTrashed: boolean().$default(() => false).notNull(),
+  organizationId: text("organizationId").notNull().references(() => organization.id, { onDelete: "cascade" }),
+  createdBy: text("createdBy").notNull().references(() => member.userId),
+  createdAt: timestamp("createdAt").$defaultFn(() => new Date()).notNull(),
+  updatedBy: text("updatedBy").notNull().references(() => member.userId),
+  updatedAt: timestamp("updatedAt").$defaultFn(() => new Date()).notNull(),
+});
+
+
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
@@ -134,5 +150,20 @@ export const invitationRelations = relations(invitation, ({ one }) => ({
   organization: one(organization, {
     fields: [invitation.organizationId],
     references: [organization.id],
+  }),
+}));
+
+export const groupRelations = relations(group, ({ one }) => ({
+  organization: one(organization, {
+    fields: [group.organizationId],
+    references: [organization.id],
+  }),
+  creator: one(member, {
+    fields: [group.createdBy],
+    references: [member.userId],
+  }),
+  updater: one(member, {
+    fields: [group.updatedBy],
+    references: [member.userId],
   }),
 }));

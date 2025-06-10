@@ -4,7 +4,7 @@ import { Command } from "cmdk";
 import { useRouter } from "next/navigation";
 import { useToggle } from "@uidotdev/usehooks";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { CheckIcon, ChevronsUpDownIcon, PlusIcon } from "lucide-react";
+import { ChevronsUpDownIcon, PlusIcon, Settings2Icon } from "lucide-react";
 
 import { useTRPC } from "@/trpc/client";
 
@@ -20,6 +20,7 @@ import { ImageAvatar } from "@/components/image-avatar";
 import { CommandSearch } from "@/components/command-search";
 
 import { OrganizationCreateSheet } from "@/modules/organizations/ui/components/organization-create-sheet";
+import { useSettingsModal } from "@/store/use-settings-modal";
 
 interface Props {
   organizationId: string;
@@ -28,10 +29,11 @@ interface Props {
 export const OrganizationSwitcher = ({ organizationId }: Props) => {
   const trpc = useTRPC();
   const router = useRouter();
+  const { onOpen } = useSettingsModal();
 
   const [openSheet, onChangeSheet] = useToggle(false);
 
-  const { data: organizations } = useSuspenseQuery(trpc.organizations.getMany.queryOptions());
+  const { data: organizations } = useSuspenseQuery(trpc.members.getMany.queryOptions());
 
   const currentOrg = organizations.find((f) => f.id === organizationId);
 
@@ -68,7 +70,19 @@ export const OrganizationSwitcher = ({ organizationId }: Props) => {
                   />
                   {org.name}
                   {currentOrg?.id === org.id && (
-                    <CheckIcon className="size-3 ml-auto" />
+                    <div className="flex items-center gap-1.5 ml-auto">
+                      <Button 
+                        size="xsIcon" 
+                        variant="outline" 
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          onOpen();
+                        }}
+                      >
+                        <Settings2Icon className="size-3" />
+                      </Button>
+                    </div>
                   )}
                 </Command.Item>
               ))}
