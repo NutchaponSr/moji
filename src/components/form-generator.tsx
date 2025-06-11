@@ -44,7 +44,7 @@ export const FormGenerator = <T extends FieldValues>({
   switch (inputType) {
     case "input":
       return (
-        <Label htmlFor={`input-${label}`} className="flex flex-col gap-1.5 items-start">
+        <Label htmlFor={`input-${label}`} className="flex flex-col gap-1.5 items-start text-primary">
           {label && label}
           <Input 
             id={`input-${label}`}
@@ -58,21 +58,21 @@ export const FormGenerator = <T extends FieldValues>({
             errors={errors}
             name={name}
             render={({ message }) => (
-              <p className="text-red-500 text-xs">{message === "Required" ? "" : message}</p>
+              <p className="text-destructive text-xs">{message === "Required" ? "" : message}</p>
             )}
           />
         </Label>
       );
     case "custom":
       return (
-        <Label htmlFor={`input-${label}`} className="flex flex-col gap-1.5 items-start">
+        <Label htmlFor={`input-${label}`} className="flex flex-col gap-1.5 items-start text-primary">
           {label && label}
           {children}
           <ErrorMessage 
             errors={errors}
             name={name}
             render={({ message }) => (
-              <p className="text-red-500 text-xs">{message === "Required" ? "" : message}</p>
+              <p className="text-destructive text-xs">{message === "Required" ? "" : message}</p>
             )}
           />
         </Label>

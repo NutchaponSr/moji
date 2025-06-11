@@ -33,7 +33,7 @@ export const InviteCode = ({ inviteCode }: Props) => {
         role="button" 
         onClick={handleCopy}
         className={cn(
-          "bg-muted relative rounded px-[0.3rem] py-[0.2rem] font-mono font-semibold text-primary select-none", 
+          "bg-accent relative rounded px-[0.3rem] py-[0.2rem] font-mono font-semibold text-primary select-none", 
           geistMono.className
         )}
       >

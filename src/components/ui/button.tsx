@@ -9,17 +9,13 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
-        outline:
-          "border bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
-        secondary:
-          "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
-        ghost: "hover:bg-[#00000008] hover:text-accent-foreground dark:hover:bg-accent/50",
+        default: "bg-primary text-white dark:text-black shadow-xs hover:bg-primary/90",
+        destructive: "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+        outline: "border border-border text-primary bg-background hover:bg-accent hover:text-primary dark:bg-transparent dark:hover:bg-accent",
+        secondary: "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
+        ghost: "text-primary hover:bg-accent hover:text-primary dark:hover:bg-accent",
         link: "text-primary underline-offset-4 hover:underline",
-        item: "justify-start font-normal hover:bg-accent hover:text-accent-foreground !gap-2",
+        item: "justify-start text-primary font-normal hover:bg-accent hover:text-primary !gap-2",
         primary: "bg-[#2383e2] hover:bg-[#0077d4] text-white shadow-[inset_0_0_0_1px_rgba(15,15,15,0.1),0_1px_2px_rgba(15,15,15,0.1)]",
       },
       size: {

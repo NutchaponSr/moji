@@ -5,7 +5,7 @@ export const iconVariants = cva(
     variants: {
       color: {
         none: "bg-none",
-        secondary: "hover:bg-[#00000008]",
+        secondary: "hover:bg-sidebar-accent",
         red: "bg-red-400",
         yellow: "bg-yellow-400",
         sky: "bg-sky-400",

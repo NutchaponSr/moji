@@ -58,9 +58,9 @@ export const UserButton = () => {
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="p-0">
-        <DropdownMenuLabel className="flex flex-col gap-0.5 px-3 py-1.5 border-b">
-          <span className="font-medium">{session.user.name}</span>
-          <span className="text-[#666] text-xs">{session.user.email}</span>
+        <DropdownMenuLabel className="flex flex-col gap-0.5 px-3 py-1.5 border-b border-ring">
+          <span className="text-primary font-medium">{session.user.name}</span>
+          <span className="text-tertiary text-xs">{session.user.email}</span>
         </DropdownMenuLabel>
         <DropdownMenuItem onClick={onOpen} className="rounded-none px-3 py-1.5">
           <Settings2Icon />

@@ -21,8 +21,16 @@ export const Logo = ({ sticky }: Props) => {
         alt="Logo"
         width={28}
         height={28}
+        className="block dark:hidden"
       />
-      <p className="font-medium text-xl">
+      <Image 
+        src="/logo-dark.svg"
+        alt="Logo"
+        width={28}
+        height={28}
+        className="hidden dark:block"
+      />
+      <p className="font-medium text-primary text-xl">
         Moji
       </p>
     </Link>

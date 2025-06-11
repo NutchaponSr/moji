@@ -26,10 +26,10 @@ export const MenuItem = ({
       )}
     >
       <div className="flex items-center space-x-2">
-        <Icon icon={icon} height={20} width={20} className={cn("text-primary shrink-0 stroke-[1.65]", isPlan && "text-[#2383e2]")} />
+        <Icon icon={icon} height={20} width={20} className={cn("text-primary shrink-0 stroke-[1.65]", isPlan && "text-marine")} />
         <p className={cn(
           "text-sm leading-5 text-primary overflow-hidden whitespace-nowrap text-ellipsis", 
-          isPlan && "text-[#2383e2]",
+          isPlan && "text-marine",
           isActive && "font-medium"
         )}>
           {label}

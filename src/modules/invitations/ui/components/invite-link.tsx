@@ -13,7 +13,7 @@ export const InviteLink = ({ invitationId }: Props) => {
 
   const link = `${process.env.NEXT_PUBLIC_APP_URL}/join/${invitationId}`;
 
-  const splitWord = `${process.env.NEXT_PUBLIC_APP_URL}` + "..." + invitationId.slice(30  , invitationId.length);
+  const splitWord = `${process.env.NEXT_PUBLIC_APP_URL}` + "..." + invitationId.slice(30, invitationId.length);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(link);
@@ -24,7 +24,7 @@ export const InviteLink = ({ invitationId }: Props) => {
   return (
     <Hint label="Copied" open={isCopied}>
       <div onClick={handleCopy}>
-        <span className="text-[#73726e] underline select-none whitespace-nowrap overflow-hidden text-ellipsis hover:text-[#eb5757] hover:cursor-pointer">
+        <span className="text-tertiary underline select-none whitespace-nowrap overflow-hidden text-ellipsis hover:text-destructive hover:cursor-pointer">
           {splitWord}
         </span>
       </div>

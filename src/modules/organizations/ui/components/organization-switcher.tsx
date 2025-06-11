@@ -68,7 +68,9 @@ export const OrganizationSwitcher = ({ organizationId }: Props) => {
                     className="size-5 rounded"
                     fallbackClassName="rounded uppercase text-sm font-medium bg-sky-400 text-white"
                   />
-                  {org.name}
+                  <p className="whitespace-nowrap overflow-hidden text-ellipsis text-primary">
+                    {org.name}
+                  </p>
                   {currentOrg?.id === org.id && (
                     <div className="flex items-center gap-1.5 ml-auto">
                       <Button 
@@ -87,17 +89,20 @@ export const OrganizationSwitcher = ({ organizationId }: Props) => {
                 </Command.Item>
               ))}
             </Command.Group>
-            <Separator />
-            <Command.Group className="p-1">
-              <Command.Item 
-                onSelect={() => onChangeSheet(true)}
-                className="relative flex select-none items-center rounded-sm px-2 py-1.5 text-xs outline-none data-[selected=true]:bg-accent data-[selected=true]:text-strong data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 cursor-pointer w-full gap-2"  
-              >
-                <PlusIcon className="size-4" />
-                New organization
-              </Command.Item>
-            </Command.Group>
           </CommandSearch>
+
+          <Separator />
+          <div className="flex flex-col p-1">
+            <Button 
+              size="sm" 
+              variant="item" 
+              className="text-xs"
+              onClick={() => onChangeSheet(true)}
+            >
+              <PlusIcon className="size-4 stroke-[1.75]" />
+              New organization
+            </Button>
+          </div>
         </PopoverContent>
       </Popover>
     </>

@@ -25,8 +25,8 @@ export const Workspaces = ({ ...props }: Props) => {
 
   return (
     <div className="flex flex-col gap-px w-full">
-      <div role="button" onClick={() => toggle()} className="transition flex items-center h-6 px-2 hover:bg-[#00000008] group">
-        <span className="text-xs text-[#91918e] group-hover:text-primary/80 leading-none font-medium">
+      <div role="button" onClick={() => toggle()} className="transition flex items-center h-6 px-2 hover:bg-sidebar-accent group">
+        <span className="text-xs text-neutral group-hover:text-primary/80 leading-none font-medium">
           Workspace
         </span>
       </div>

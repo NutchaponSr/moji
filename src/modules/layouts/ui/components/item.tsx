@@ -29,7 +29,7 @@ export const Item = ({
   return (
     <div 
       role="button" 
-      className="select-none transition cursor-pointer flex font-medium hover:bg-[#00000008] group/item"
+      className="select-none transition cursor-pointer flex font-medium hover:bg-sidebar-accent group/item"
       style={{
         paddingLeft: level ? `${(level * 12)}px` : undefined
       }}
@@ -54,7 +54,7 @@ export const Item = ({
                 iconVariants({ color: "secondary" })
               )}
             >
-              <ChevronRightIcon className={cn("size-4 text-[#B7B5B0] transition-transform", isExpanded && "rotate-90")} />
+              <ChevronRightIcon className={cn("size-4 text-muted transition-transform", isExpanded && "rotate-90")} />
             </div>
           </>
         )}
