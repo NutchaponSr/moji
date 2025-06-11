@@ -1,6 +1,8 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+import { timesOfDay } from "@/types/date";
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -39,4 +41,12 @@ export function generateInvokeId(prefix: string = "inv"): string {
   const randomHex = Array.from(randomBytes, b => b.toString(16).padStart(2, "0")).join(""); // 32 hex chars
 
   return `${prefix}${timestamp}${randomHex}`;
+}
+
+export function formatGreeting(date: Date): string {
+  const hour = date.getHours(); 
+
+  const timeOfDay = timesOfDay.find(({ from, to }) => from < to ? hour >= from && hour < to : hour >= from || hour < to);
+
+  return `Good ${timeOfDay?.time || "Day"}`;
 }
