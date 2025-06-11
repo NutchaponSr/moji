@@ -18,10 +18,10 @@ const Layout = ({ children }: Props) => {
           strokeDasharray={"4 2"}
         />
         <div className="overflow-hidden">
-          <h2 className="absolute -translate-y-full text-wrap pr-10 text-6xl font-bold">
+          <h2 className="absolute -translate-y-full text-wrap pr-10 text-6xl font-bold text-primary">
             Where Data Flows, Teams Grow
           </h2>
-          <p className="py-10">
+          <p className="py-10 text-primary">
             A database designed for every team, from simple tables to enterprise solutions
           </p>
         </div>

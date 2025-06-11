@@ -24,9 +24,9 @@ export const GroupItem = ({ group }: Props) => {
         action={
           <div 
             role="button" 
-            className="shrink-0 grow-0 size-5.5 hidden group-hover/item:flex items-center justify-center rounded-sm hover:bg-[#00000008]"
+            className="shrink-0 grow-0 size-5.5 hidden group-hover/item:flex items-center justify-center rounded-sm hover:bg-sidebar-accent"
           >
-            <MoreHorizontalIcon className="size-4 text-[#73726e]" />
+            <MoreHorizontalIcon className="size-4 text-tertiary" />
           </div>
         }
       />

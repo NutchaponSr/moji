@@ -26,7 +26,7 @@ export const OrganizationCreateSheet = ({ ...props }: Props) => {
           <div />
         </SheetHeader>
         <div className="pb-[120px] grid grid-cols-[48px_1fr_48px] gap-y-4">
-          <h2 className="col-start-2 text-xl font-semibold">
+          <h2 className="col-start-2 text-xl font-semibold text-primary">
             Create organization
           </h2>
           <div className="col-start-2">

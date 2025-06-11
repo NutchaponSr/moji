@@ -17,7 +17,7 @@ interface Props {
 
 export const Header = async ({ organizationId }: Props) => {
   return (
-    <header className="fixed top-0 z-50 w-full bg-white/90 backdrop-blur-xl">
+    <header className="fixed top-0 z-50 w-full bg-background backdrop-blur-xl">
       <div className="flex flex-row h-14 md:h-16 items-center justify-between px-6 mx-auto max-w-5xl">
         <div className="flex flex-row items-center gap-2">
           <Logo />

@@ -44,7 +44,7 @@ export const OrganizationButton = ({ organizationId }: Props) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <div role="button" className="select-none transition flex items-center min-w-0 h-8 w-auto p-2 hover:bg-[#00000008]">
+        <div role="button" className="select-none transition flex items-center min-w-0 h-8 w-auto p-2 hover:bg-sidebar-accent">
           <div className="flex items-center w-full text-sm min-h-7 h-8.5 py-1 overflow-hidden gap-2">
             <div className="shrink-0 grow-0 size-5.5 flex items-center justify-center">
               <ImageAvatar 
@@ -74,9 +74,9 @@ export const OrganizationButton = ({ organizationId }: Props) => {
                   e.stopPropagation();
                   collapse();
                 }} 
-                className="transition inline-flex items-center justify-center shrink-0 rounded size-7 relative hover:bg-[#00000008]"
+                className="transition inline-flex items-center justify-center shrink-0 rounded size-7 relative hover:bg-sidebar-accent text-muted-foreground hover:text-primary opacity-0 group-hover/sidebar:opacity-100"
               >
-                <SidebarIcon className="size-5 text-muted-foreground stroke-[1.5]" />
+                <SidebarIcon className="size-5 stroke-[1.5]" />
               </button>
             </div>
           </div>
@@ -91,10 +91,10 @@ export const OrganizationButton = ({ organizationId }: Props) => {
               src={organization.image || ""}
             />
             <div className="flex flex-col gap-0 whitespace-nowrap overflow-hidden text-ellipsis">
-              <span className="text-left text-foreground text-sm font-medium whitespace-nowrap overflow-hidden text-ellipsis">
+              <span className="text-left text-sm font-medium whitespace-nowrap overflow-hidden text-ellipsis text-primary">
                 {organization.name}
               </span>
-                <span className="text-left text-muted-foreground text-xs whitespace-nowrap overflow-hidden text-ellipsis first-letter:uppercase">
+                <span className="text-left text-tertiary text-xs whitespace-nowrap overflow-hidden text-ellipsis first-letter:uppercase">
                 {organization.plan} Plan · {memberCount} member
                 </span>
             </div>
@@ -113,7 +113,7 @@ export const OrganizationButton = ({ organizationId }: Props) => {
         <Separator />
         <div className="flex flex-col gap-px p-1">
           {session?.user.email && (
-            <p className="px-2 my-1 text-xs font-medium">
+            <p className="px-2 my-1 text-xs font-medium text-tertiary">
               {session.user.email}
             </p>
           )}
@@ -130,7 +130,9 @@ export const OrganizationButton = ({ organizationId }: Props) => {
                 className="size-5 rounded"
                 fallbackClassName="rounded uppercase text-sm font-medium bg-sky-400 text-white"
               />
-              {org.name}
+              <p className="text-primary text-sm leading-5 whitespace-nowrap overflow-hidden text-ellipsis">
+                {org.name}
+              </p>
               {organizationId === org.id && (
                 <CheckIcon className="size-3 ml-auto" />
               )}

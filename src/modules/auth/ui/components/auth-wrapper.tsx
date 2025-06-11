@@ -10,7 +10,7 @@ export const AuthWrapper = ({ title, socials, children }: Props) => {
   return (
     <div className="relative w-80 py-[5em] lg:py-24">
       <div className="flex flex-col gap-y-3">
-        <div className="relative mb-4 text-muted-foreground">
+        <div className="relative mb-4 text-primary">
           <h2 className="text-center text-xl">
             {title}
           </h2>

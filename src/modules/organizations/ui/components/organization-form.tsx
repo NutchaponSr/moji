@@ -68,7 +68,7 @@ export const OrganizationForm = () => {
         placeholder="moji"
         {...form}
       />
-      <Button type="submit">
+      <Button type="submit" variant="primary">
         Create organization
       </Button>
     </form>

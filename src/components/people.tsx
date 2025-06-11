@@ -28,7 +28,7 @@ import { memberColumns } from "@/modules/members/ui/components/member-columns";
 import { RoleDropdown } from "@/modules/organizations/ui/components/role-dropdown";
 import { invitationColumns } from "@/modules/invitations/ui/components/invitation-columns";
 
-export const PeopleContent = () => {
+export const People = () => {
   const { type } = useSettingsModal();
 
   const trpc = useTRPC();
@@ -80,7 +80,7 @@ export const PeopleContent = () => {
       {canView() && (
         <>
           <div className="flex flex-col">
-            <div className="flex items-center justify-between pb-3 mb-4 border-b-2 border-dotted">
+            <div className="flex items-center justify-between pb-3 mb-4 border-b-2 border-border border-dotted">
               <h2 className="text-base font-medium text-primary">
                 Share link
               </h2>
@@ -91,7 +91,7 @@ export const PeopleContent = () => {
                   <h3 className="text-sm text-primary font-normal w-auto mb-px">
                     Role
                   </h3>
-                  <p className="text-xs text-[#73726e] w-[85%] leading-4">
+                  <p className="text-xs text-tertiary w-[85%] leading-4">
                     access to anyone who open it.
                   </p>
                 </div>
@@ -103,7 +103,7 @@ export const PeopleContent = () => {
                   <h3 className="text-sm text-primary font-normal w-auto mb-px">
                     Invite link to add member
                   </h3>
-                  <p className="text-xs text-[#73726e] w-[85%] leading-4">
+                  <p className="text-xs text-tertiary w-[85%] leading-4">
                   Only people with permission to invite members can see this.
                   </p>
                 </div>
@@ -121,7 +121,7 @@ export const PeopleContent = () => {
                 Invite links
               </div>
     
-              <table className="w-full text-xs border-y border-primary/9">
+              <table className="w-full text-xs border-y border-border">
                 <thead>
                   {table.getHeaderGroups().map((headerGroup) => (
                     <tr key={headerGroup.id} className="h-8 w-full">
@@ -143,7 +143,7 @@ export const PeopleContent = () => {
                 <tbody>
                   {table.getRowModel().rows.length ? (
                     table.getRowModel().rows.map((row) => (
-                      <tr key={row.id} className="w-full border-t border-primary/9">
+                      <tr key={row.id} className="w-full border-t border-border">
                         {row.getVisibleCells().map((cell) => (
                           <td
                             key={cell.id}
@@ -161,7 +161,7 @@ export const PeopleContent = () => {
                     <tr>
                       <td 
                         colSpan={table.getAllColumns().length} 
-                        className="text-xs text-[#73726e] leading-4 whitespace-nowrap overflow-hidden text-ellipsis h-8 px-1 py-2 border-t border-primary/9"
+                        className="text-xs text-tertiary leading-4 whitespace-nowrap overflow-hidden text-ellipsis h-8 px-1 py-2 border-t border-border"
                       >
                         No links
                       </td>
@@ -174,24 +174,24 @@ export const PeopleContent = () => {
           <div className="h-10 w-full" />
         </>
       )}
-      <div className="flex items-center justify-between pb-3 mb-4 border-b-2 border-dotted">
+      <div className="flex items-center justify-between pb-3 mb-4 border-b-2 border-border border-dotted">
         <h2 className="text-base font-medium text-primary">
           People
-          <span className="text-[#46444073] leading-4.5 pl-1 text-sm">
+          <span className="text-muted leading-4.5 pl-1 text-sm">
             {organization.members.length}
           </span>
         </h2>
 
         <label className={cn(
-          "flex items-center max-w-64 w-full text-xs leading-4 py-1 px-2.5 rounded-full bg-[#f2f1ee99] cursor-text",
+          "flex items-center max-w-64 w-full text-xs leading-4 py-1 px-2.5 rounded-full bg-input cursor-text",
           isFocused 
-            ? "shadow-[inset_0_0_0_1px_rgba(84,72,49,0.15),0_0_0_2px_rgb(255,255,255),0_0_0_4px_rgb(35,131,226),0_0_0_6px_rgb(255,255,255)]"
-            : "shadow-[0_0_0_1px_rgba(15,15,15,0.1)]"
+            ? "shadow-[inset_0_0_0_1px_rgba(84,72,49,0.15),0_0_0_2px_rgb(255,255,255),0_0_0_4px_rgb(35,131,226),0_0_0_6px_rgb(255,255,255)] dark:shadow-[inset_0_0_0_1px_rgb(35,131,226),0_0_0_1px_rgb(35,131,226)]"
+            : "shadow-[0_0_0_1px_rgba(15,15,15,0.1)] dark:shadow-[0_0_0_1px_rgba(255,255,255,0.075)]"
         )}>
-          <SearchIcon className="size-4 mr-2 text-[#73726e]" />
+          <SearchIcon className="size-4 mr-2 text-foreground" />
           <input 
             placeholder="Search member"
-            className="focus-visible:outline-none h-4 w-full placeholder:text-xs placeholder:text-[#b6b5b2] text-primary"
+            className="focus-visible:outline-none h-4 w-full placeholder:text-xs placeholder:text-foreground text-primary"
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             value={memberGlobalFilter}
@@ -202,13 +202,13 @@ export const PeopleContent = () => {
               onClick={() => setMemberGlobalFilter("")}
               className="inline-flex justify-center items-center shrink-0 rounded-full transition ml-2"
             >
-              <Icon icon="solar:close-circle-bold" height={16} width={16} className="text-[#c1bfb8] hover:text-[#b6b5b2]" />
+              <Icon icon="solar:close-circle-bold" height={16} width={16} className="text-foreground hover:text-foreground" />
             </button>
           )}
         </label>
       </div>
       
-      <table className="w-full text-xs border-y border-primary/9">
+      <table className="w-full text-xs border-y border-border">
         <thead>
           {tableMember.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id} className="h-8 w-full">
@@ -233,7 +233,7 @@ export const PeopleContent = () => {
         <tbody>
           {tableMember.getRowModel().rows.length ? (
             tableMember.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="w-full border-t border-primary/9">
+              <tr key={row.id} className="w-full border-t border-border">
                 {row.getVisibleCells().map((cell) => (
                   <td
                     key={cell.id}
@@ -255,7 +255,7 @@ export const PeopleContent = () => {
             <tr>
               <td 
                 colSpan={tableMember.getAllColumns().length} 
-                className="text-xs text-[#73726e] leading-4 whitespace-nowrap overflow-hidden text-ellipsis h-8 px-1 py-2 border-t border-primary/9"
+                className="text-xs text-tertiary leading-4 whitespace-nowrap overflow-hidden text-ellipsis h-8 px-1 py-2 border-t border-border"
               >
                 No search results
               </td>

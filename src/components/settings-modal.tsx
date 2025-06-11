@@ -6,8 +6,9 @@ import {
   DialogHidden
 } from "@/components/ui/dialog";
 
-import { PeopleContent } from "@/components/people-content";
+import { People} from "@/components/people";
 import { SettingSidebar } from "@/components/settings-sidebar";
+import { Preferences } from "./preferences";
 
 export const SettingsModal = () => {
   const { open, onClose } = useSettingsModal();
@@ -20,7 +21,8 @@ export const SettingsModal = () => {
           <SettingSidebar />
           <div role="tabpanel" className="grow h-full max-h-[715px] overflow-hidden rounded-r-lg">
             <div className="flex flex-col w-full h-full bg-background">
-              <PeopleContent />
+              <People />
+              <Preferences />
             </div>
           </div>
         </div>  

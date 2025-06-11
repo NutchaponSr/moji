@@ -66,9 +66,9 @@ export const GroupWorkspace = ({ organizationId }: Props) => {
                   <div 
                     role="button" 
                     onClick={() => handleCreate(year)}
-                    className="shrink-0 grow-0 size-5.5 hidden group-hover/item:flex items-center justify-center rounded-sm hover:bg-[#00000008]"
+                    className="shrink-0 grow-0 size-5.5 hidden group-hover/item:flex items-center justify-center rounded-sm hover:bg-sidebar-accent"
                   >
-                    <PlusIcon className="size-4 text-[#73726e]" />
+                    <PlusIcon className="size-4 text-tertiary" />
                   </div>
                 }  
               />

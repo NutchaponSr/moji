@@ -8,10 +8,10 @@ export const SettingSidebar = () => {
   const { type, onChange } = useSettingsModal();
 
   return (
-    <div className="h-full bg-[#fbfbfa] grow-0 shrink-0 w-60 overflow-y-auto rounded-l-lg">
+    <div className="h-full bg-sidebar grow-0 shrink-0 w-60 overflow-y-auto rounded-l-lg">
       <div className="flex flex-col justify-between py-3 px-2 gap-1">
         <div role="tablist" aria-orientation="vertical" className="flex flex-col gap-px">
-          <h3 className="text-xs leading-none mb-px text-[#73726e] font-semibold flex h-6 px-2 text-ellipsis overflow-hidden">
+          <h3 className="text-xs leading-none mb-px text-tertiary font-semibold flex h-6 px-2 text-ellipsis overflow-hidden">
             Account
           </h3>
           <MenuItem 
@@ -20,9 +20,10 @@ export const SettingSidebar = () => {
             onOpen={() => {}}
           />
           <MenuItem 
-            icon="solar:tuning-2-outline"
+            icon={type === "preference" ? "solar:tuning-2-bold" : "solar:tuning-2-outline"}
             label="Preferences"
-            onOpen={() => {}}
+            onOpen={() => onChange("preference")}
+            isActive={type === "preference"}
           />
           <MenuItem 
             icon="solar:bell-outline"
@@ -35,7 +36,7 @@ export const SettingSidebar = () => {
             onOpen={() => {}}
           />
           <div className="h-4.5 w-full flex" />
-          <h3 className="text-xs leading-none mb-px text-[#73726e] font-semibold flex h-6 px-2 text-ellipsis overflow-hidden">
+          <h3 className="text-xs leading-none mb-px text-tertiary font-semibold flex h-6 px-2 text-ellipsis overflow-hidden">
             Organization
           </h3>
           <MenuItem 

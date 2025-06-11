@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Icon } from "@iconify-icon/react";
-import { MoreHorizontalIcon, Trash2Icon } from "lucide-react";
+import { MoreHorizontalIcon } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { role } from "@/db/schema";
@@ -78,10 +78,10 @@ export const InviteRole = ({
               >
                 <div className="flex items-center gap-2 leading-[120%] select-none min-h-7 w-full text-sm">
                   <div className="flex-1">
-                    <div className="whitespace-nowrap overflow-hidden text-ellipsis">
+                    <div className="whitespace-nowrap overflow-hidden text-primary text-ellipsis">
                       {role.label}
                     </div>
-                    <div className="mt-1 text-xs text-muted-foreground break-words">
+                    <div className="mt-1 text-xs text-tertiary break-words">
                       {role.description}
                     </div>
                   </div>
@@ -93,7 +93,6 @@ export const InviteRole = ({
           </DropdownMenuPortal>
         </DropdownMenuSub>
         <DropdownMenuItem onClick={() => deleteLink.mutate({ invitationId }, { onSuccess: () => queryClient.invalidateQueries(trpc.organizations.current.queryOptions({ organizationId })) })} variant="destructive">
-          <Trash2Icon />
           Delete
         </DropdownMenuItem>
       </DropdownMenuContent>

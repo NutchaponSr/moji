@@ -13,7 +13,7 @@ export const SwitchAuth = () => {
 
   return (
     <div className="absolute right-0 top-0 flex h-[4em] items-center justify-end bg-background px-5 lg:h-20">
-      <div role="tablist" className="inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground">
+      <div role="tablist" className="inline-flex h-9 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground gap-1">
         <Button asChild variant={pathname === SIGN_IN_URL ? "outline" : "ghost"} size="sm">
           <Link href="/auth/sign-in">
             Sign in
