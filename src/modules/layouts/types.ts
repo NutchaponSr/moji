@@ -6,17 +6,17 @@ export const iconVariants = cva(
       color: {
         none: "bg-none",
         secondary: "hover:bg-sidebar-accent",
-        red: "bg-destructive",
-        yellow: "bg-warning",
-        sky: "bg-marine",
+        red: "bg-red-foreground dark:bg-red-muted",
+        yellow: "bg-yellow-foreground dark:bg-yellow-muted",
+        blue: "bg-blue-foreground dark:bg-blue-muted",
       },
       text: {
         default: "text-white",
-        secondary: "text-[#91918e]",
-        red: "text-destructive",
-        yellow: "text-warning",
-        sky: "text-marine",
-      }
+        secondary: "text-neutral",
+        red: "text-red-secondary",
+        yellow: "text-yellow-secondary",
+        blue: "text-blue-secondary",
+      },
     },
     defaultVariants: {
       color: "none",
@@ -42,34 +42,11 @@ export interface Workspace extends VariantProps<typeof iconVariants> {
   label: string;
   description: string;
   icon: string;
-  className: string;
 }
 
-export const group: Workspace = {
-  label: "Group",
-  href: "groups",
-  description: "Combining diverse skills to achieve shared goals.",
-  icon: "solar:library-bold",
-  className: "bg-[#f5e0e9] dark:bg-[#4e2c3c]",
-  text: "yellow"
-};
+export const layouts = [
+  "table",
+  "board",
+] as const;
 
-export const competency: Workspace = {
-  label: "Competency",
-  href: "competencies",
-  description: "Diverse skills and competencies to achieve shared goals.",
-  icon: "solar:file-text-bold",
-  className: "bg-[#fadec9] dark:bg-[#5c3b23]",
-  text: "yellow"
-}
-
-export const employee: Workspace = {
-  label: "Employee",
-  href: "employees",
-  description: "Manage employees with diverse competencies to achieve goals.",
-  icon: "solar:users-group-rounded-bold",
-  className: "bg-[#d8e5ee] dark:bg-[#143a4e]",
-  text: "sky"
-}
-
-export const workspaces: Workspace[] = [group, competency, employee] as const;
+export type LayoutsType = typeof layouts[number];

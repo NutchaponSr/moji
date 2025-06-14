@@ -43,7 +43,7 @@ export const Item = ({
                 iconVariants({ color })
               )}
             >
-              <Icon icon={icon} width={16} height={16} className={cn(iconVariants({ text }))} />
+              <Icon icon={icon} width={18} height={18} className={cn(iconVariants({ text }))} />
             </div>
             <div 
               role="button"

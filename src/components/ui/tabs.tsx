@@ -12,7 +12,7 @@ function Tabs({
   return (
     <TabsPrimitive.Root
       data-slot="tabs"
-      className={cn("flex flex-col", className)}
+      className={cn("flex flex-col gap-2", className)}
       {...props}
     />
   )
@@ -26,7 +26,7 @@ function TabsList({
     <TabsPrimitive.List
       data-slot="tabs-list"
       className={cn(
-        "bg-muted text-muted-foreground inline-flex h-9 w-fit items-center justify-center rounded-lg p-[3px]",
+        "bg-transparent inline-flex w-fit items-center justify-start p-0.5 gap-0.5",
         className
       )}
       {...props}
@@ -42,7 +42,7 @@ function TabsTrigger({
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       className={cn(
-        "dark:data-[state=active]:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 text-foreground dark:text-muted-foreground inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 border border-transparent text-sm font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-[state=active]:after:bg-primary relative rounded-none py-1 px-2 after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none",
+        "px-2 py-1 rounded-sm hover:bg-accent text-tertiary text-sm font-medium  data-[state=active]:text-primary data-[state=active]:bg-accent data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative after:absolute after:inset-x-0 after:-bottom-0 after:-mb-1 after:h-0.5",
         className
       )}
       {...props}

@@ -1,6 +1,6 @@
 import { KanbanSquareDashedIcon } from "lucide-react";
 import { WorkspaceCard } from "./workspace-card";
-import { group } from "../../types";
+import { group } from "@/modules/layouts/constants";
 
 interface Props {
   organizationId: string;
