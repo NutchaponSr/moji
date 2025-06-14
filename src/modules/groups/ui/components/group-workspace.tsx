@@ -48,6 +48,7 @@ export const GroupWorkspace = ({ organizationId }: Props) => {
         icon="solar:library-bold" 
         label="Group" 
         color="red" 
+        text="red"
         isExpanded={on}
         onToggle={toggle}
       />

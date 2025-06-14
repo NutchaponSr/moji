@@ -37,7 +37,7 @@ const Layout = async ({ children, params }: Props) => {
       </HydrationBoundary>
       <div className="order-3 flex flex-col w-full overflow-hidden isolation-auto bg-transparent relative">
         <Header />
-        <main className="grow-0 shrink flex flex-col bg-background z-1 h-full max-h-full absolute w-full">
+        <main className="grow-0 shrink flex flex-col bg-background z-1 h-full max-h-full w-full">
           {children}
         </main>
       </div>

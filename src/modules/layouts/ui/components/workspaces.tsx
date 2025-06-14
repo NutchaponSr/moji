@@ -38,13 +38,15 @@ export const Workspaces = ({ ...props }: Props) => {
             icon="solar:book-bold" 
             label="Competeny" 
             color="yellow"
+            text="yellow"
             isExpanded={expandedItems["Competeny"]}
             onToggle={() => toggleItem("Competeny")}
           />
           <Item 
             icon="solar:user-bold" 
             label="Employee" 
-            color="sky"
+            color="blue"
+            text="blue"
             isExpanded={expandedItems["Employee"]}
             onToggle={() => toggleItem("Employee")}
           />

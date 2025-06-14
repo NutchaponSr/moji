@@ -1,7 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { MenuIcon } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+
+import { Breabcrumb } from "./breabcrumb";
+
 import { useSidebarStore } from "../../store/use-sidebar-store";
 
 export const Header = () => {
@@ -20,6 +24,8 @@ export const Header = () => {
               <MenuIcon className="size-5" />
             </Button>
           )}
+
+          <Breabcrumb />
         </div>
       </div>
     </header>

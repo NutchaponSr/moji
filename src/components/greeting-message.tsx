@@ -16,7 +16,7 @@ export const GreetingMessage = () => {
   return (
     <div className="gap-6 col-span-3">
       <div className="w-full h-full flex relative flex-col items-center justify-center">
-        <div className="mt-16 px-12 w-full h-full">
+        <div className="mt-8 px-12 w-full h-full">
           <div className="w-full h-full flex items-center justify-center">
             <h1 className="flex items-center text-[30px] leading-[1.2] text-3xl font-bold text-primary">
               {formatGreeting(currentTime)},&nbsp;{session?.user.name}

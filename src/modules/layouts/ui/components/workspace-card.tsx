@@ -21,7 +21,7 @@ export const WorkspaceCard = ({
         className="flex flex-col transition cursor-pointer overflow-hidden rounded-2xl bg-white dark:bg-[#ffffff0d] relative h-40 justify-stretch"
       >
         <div className="relative mb-4">
-          <div className={cn("h-11", workspace.className)} />
+          <div className={cn(iconVariants({ color: workspace.color }),"h-11")} />
           <div className="flex items-center justify-center rounded-e-sm absolute -bottom-3.5 left-4">
             <Icon icon={workspace.icon} width={32} height={32} className={cn(iconVariants({ text: workspace.text }))} />
           </div>
