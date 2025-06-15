@@ -1,3 +1,5 @@
+import { inferRouterOutputs } from "@trpc/server";
+
 import { AppRouter } from "@/trpc/routers/_app";
 
-export type Group = NonNullable<Awaited<ReturnType<AppRouter["groups"]["getMeny"]>>>[0];
+export type Group = inferRouterOutputs<AppRouter>["groups"]["getByYear"][0]

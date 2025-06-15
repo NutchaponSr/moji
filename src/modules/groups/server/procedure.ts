@@ -21,6 +21,23 @@ export const groupProcedure = createTRPCRouter({
 
       return groups;
     }),
+  getByYear: protectedProcedure
+    .input(
+      z.object({
+        organizationId: z.string(),
+        year: z.string(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const groups = await db.query.group.findMany({
+        where: and(
+          eq(group.organizationId, input.organizationId),
+          eq(group.year, input.year),
+        ),
+      });
+
+      return groups;
+    }),
   create: protectedProcedure
     .input(
       z.object({
