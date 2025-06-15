@@ -27,16 +27,16 @@ export const Toolbar = () => {
         <div className="grow h-full">
           <div className="flex flex-row items-center justify-end h-full gap-0.5">
             <Button variant="icon" size="icon">
-              <FilterIcon className="size-5" />
+              <FilterIcon />
             </Button>
             <Button variant="icon" size="icon">
-              <ArrowUpDownIcon className="size-5" />
+              <ArrowUpDownIcon />
             </Button>
             <Button variant="icon" size="icon">
-              <ZapIcon className="size-5" />
+              <ZapIcon />
             </Button>
             <Button variant="icon" size="icon">
-              <SearchIcon className="size-5" />
+              <SearchIcon />
             </Button>
             <div className="ml-1">
               <Button variant="primary" size="sm" className="font-semibold">

@@ -13,7 +13,7 @@ interface Props {
 
 export const Banner = ({ workspace }: Props) => {
   return (
-    <div className="w-full flex flex-col items-center shrink-0 grow-0 sticky left-0">
+    <section className="w-full flex flex-col items-center shrink-0 grow-0 sticky left-0">
       <div className="max-w-full pl-24 w-full transition">
         <div className="flex py-1 justify-start flex-wrap gap-0.5">
           <Button variant="ghost" size="sm" className="text-muted hover:text-muted">
@@ -37,6 +37,6 @@ export const Banner = ({ workspace }: Props) => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

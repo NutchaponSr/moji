@@ -1,4 +1,4 @@
-import { createLoader, parseAsString } from "nuqs";
+import { createLoader, parseAsString } from "nuqs/server";
 
 const params = {
   year: parseAsString.withDefault(String(new Date().getFullYear())).withOptions({ clearOnDefault: true })
