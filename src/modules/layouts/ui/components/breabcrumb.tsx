@@ -1,12 +1,12 @@
 import React from "react";
 import Link from "next/link";
 
-import { Icon } from "@iconify-icon/react";
+import { HomeIcon } from "lucide-react";
 import { useParams, usePathname } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 
-import { DEFAULT_PAGE } from "../../constants";
+import { DEFAULT_PAGE } from "@/modules/layouts/constants";
 
 export const Breabcrumb = () => {
   const pathname = usePathname();
@@ -27,7 +27,7 @@ export const Breabcrumb = () => {
           variant="ghost"
         > 
           <Link href={`/${params.organizationId}/overviews`}>
-            <Icon icon="solar:home-angle-outline" width={16} height={16} />
+            <HomeIcon className="size-4" />
             Overviews
           </Link>
         </Button>

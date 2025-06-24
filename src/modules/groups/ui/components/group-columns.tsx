@@ -2,6 +2,7 @@ import { Icon } from "@iconify-icon/react";
 
 import { ColumnDef } from "@tanstack/react-table";
 import { Group } from "../../types";
+import { columnIcons } from "@/modules/layouts/constants";
 
 export const columns: ColumnDef<Group>[] = [
   {
@@ -30,7 +31,9 @@ export const columns: ColumnDef<Group>[] = [
       </div>
     ),
     meta: {
-      width: "295px"
+      width: "295px",
+      icon: columnIcons["text"],
+      variant: "text"
     }
   }
 ]
