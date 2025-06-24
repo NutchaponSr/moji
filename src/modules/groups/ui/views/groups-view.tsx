@@ -45,7 +45,7 @@ export const GroupsView = ({ organizationId }: Props) => {
       <Banner workspace={group} />
 
       <Tabs defaultValue={new Date().getFullYear().toString()}>
-        <Toolbar />
+        <Toolbar table={table} />
         <TabsContent value={query.year}>
           <section className="grow shrink-0 flex flex-col relative">
             <LayoutsProvider table={table} />

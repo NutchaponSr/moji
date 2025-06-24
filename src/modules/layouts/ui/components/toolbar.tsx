@@ -1,16 +1,23 @@
 import { 
   ArrowUpDownIcon,
-  FilterIcon, 
   SearchIcon, 
   ZapIcon
 } from "lucide-react";
+import { Table } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+
+import { FilterPopover } from "@/modules/layouts/ui/components/filter-popover";
+
 import { useGroupQuery } from "@/modules/groups/hooks/use-group-query";
 
-export const Toolbar = () => {
+interface Props<T> {
+  table: Table<T>;
+} 
+
+export const Toolbar = <T,>({ table }: Props<T>) => {
   const [, setQuery] = useGroupQuery();
 
   return (
@@ -26,9 +33,7 @@ export const Toolbar = () => {
         </TabsList>
         <div className="grow h-full">
           <div className="flex flex-row items-center justify-end h-full gap-0.5">
-            <Button variant="icon" size="icon">
-              <FilterIcon />
-            </Button>
+            <FilterPopover columns={table.getAllColumns()} />
             <Button variant="icon" size="icon">
               <ArrowUpDownIcon />
             </Button>
