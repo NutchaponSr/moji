@@ -2,8 +2,8 @@ import { Column } from "@tanstack/react-table";
 
 import { Filter, FilterGroup } from "@/modules/layouts/types";
 
-import { Renderer } from "../filters/renderer";
-import { ConnectorDropdown } from "./connector-dropdown";
+import { Renderer } from "@/modules/layouts/ui/components/renderer";
+import { ConnectorDropdown } from "@/modules/layouts/ui/components/connector-dropdown";
 
 interface Props<T> {
   items: (Filter<T> | FilterGroup<T>)[];

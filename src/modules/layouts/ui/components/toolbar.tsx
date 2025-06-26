@@ -1,5 +1,4 @@
 import { 
-  ArrowUpDownIcon,
   SearchIcon, 
   ZapIcon
 } from "lucide-react";
@@ -12,6 +11,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { FilterPopover } from "@/modules/layouts/ui/components/filter-popover";
 
 import { useGroupQuery } from "@/modules/groups/hooks/use-group-query";
+import { SortPopover } from "./sort-popover";
 
 interface Props<T> {
   table: Table<T>;
@@ -34,9 +34,7 @@ export const Toolbar = <T,>({ table }: Props<T>) => {
         <div className="grow h-full">
           <div className="flex flex-row items-center justify-end h-full gap-0.5">
             <FilterPopover columns={table.getAllColumns()} />
-            <Button variant="icon" size="icon">
-              <ArrowUpDownIcon />
-            </Button>
+            <SortPopover table={table} />
             <Button variant="icon" size="icon">
               <ZapIcon />
             </Button>
