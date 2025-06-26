@@ -11,6 +11,9 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/modifiers": "^9.0.0",
+    "@dnd-kit/sortable": "^10.0.0",
     "@edgestore/react": "^0.5.2",
     "@edgestore/server": "^0.5.2",
     "@hookform/error-message": "^2.0.1",
@@ -46,13 +49,11 @@
     "date-fns": "^4.1.0",
     "dotenv": "16.5.0",
     "drizzle-orm": "0.43.1",
-    "emblor": "^1.4.8",
     "lucide-react": "^0.511.0",
     "next": "15.2.4",
     "next-themes": "^0.4.6",
     "nuqs": "^2.4.3",
     "postgres": "^3.4.7",
-    "qrcode.react": "^4.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-dropzone": "^14.3.8",

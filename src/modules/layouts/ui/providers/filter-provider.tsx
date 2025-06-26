@@ -1,4 +1,4 @@
-import { Text } from "@/modules/layouts/ui/filters/text";
+import { Text } from "@/modules/layouts/ui/components/text";
 
 import { Filter } from "@/modules/layouts/types";
 

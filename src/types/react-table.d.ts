@@ -12,4 +12,11 @@ declare module "@tanstack/react-table" {
     icon?: LucideIcon;
     variant: ColumnType;
   }
+
+  interface ColumnSort {
+    desc: boolean;
+    id: string;
+    type: ColumnType;
+    icon?: LucideIcon;
+  }
 }
