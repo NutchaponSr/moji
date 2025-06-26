@@ -1,20 +1,11 @@
+import { useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import { useFilterStore } from "@/modules/layouts/store/use-filter-store";
 
 export const useFilter = () => {
-  const filterGroup = useFilterStore((state) => state.filterGroup);
-
-  const {
-    setFilterGroup,
-    addFilter,
-    updateFilter,
-    removeFilter,
-    addFilterGroup,
-    updateGroup,
-    removeGroup,
-    setConnector,
-  } = useFilterStore(useShallow((state) => ({
+  const store = useFilterStore(useShallow((state) => ({
+    filterGroup: state.filterGroup,
     setFilterGroup: state.setFilterGroup,
     addFilter: state.addFilter,
     updateFilter: state.updateFilter,
@@ -25,33 +16,23 @@ export const useFilter = () => {
     setConnector: state.setConnector,
   })));
 
-  const filters = filterGroup.filters;
-  const groups = filterGroup.groups;
-  const connector = filterGroup.connector;
+  const { filters, groups, connector } = store.filterGroup;
 
-  const isFiltering = filters.length > 0 || groups.length > 0;
+  const isFiltering = useMemo(() => 
+    filters.length > 0 || groups.length > 0, 
+    [filters.length, groups.length]
+  );
 
-  const allFilters = [
-    ...filters,
-    ...groups,
-  ].sort((a, b) => a.id - b.id);
+  const sortedItems = useMemo(() => 
+    [...filters, ...groups].sort((a, b) => a.id - b.id), 
+  [filters, groups]);
 
   return {
-    allFilters,
-    filterGroup,
+    ...store,
+    sortedItems,
     filters,
     groups,
     connector,
     isFiltering,
-
-    // Actions
-    setFilterGroup,
-    addFilter,
-    updateFilter,
-    removeFilter,
-    addFilterGroup,
-    updateGroup,
-    removeGroup,
-    setConnector,
   };
 }
