@@ -77,7 +77,7 @@ export const SortPopover = <T,>({ table }: Props<T>) => {
 
   return (
     <Popover modal>
-      <PopoverTrigger>
+      <PopoverTrigger asChild>
         <Button variant="icon" size="icon">
           <ArrowUpDownIcon />
         </Button>
