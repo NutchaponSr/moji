@@ -107,6 +107,7 @@ export interface TableResponseType<T> {
   setColumnOrder: React.Dispatch<React.SetStateAction<ColumnOrderState>>;
   setGlobalFilter: React.Dispatch<React.SetStateAction<string>>;
   handleSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleClear: () => void;
   filterData: (row: Row<T>) => boolean;
 }
 

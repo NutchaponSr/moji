@@ -6,6 +6,7 @@ import { getQueryClient, trpc } from "@/trpc/server";
 import { GroupsView } from "@/modules/groups/ui/views/groups-view";
 
 import { loadGroupQuery } from "@/modules/groups/search-params";
+import { Suspense } from "react";
 
 interface Props {
   searchParams: Promise<SearchParams>;
@@ -27,7 +28,9 @@ const Page = async ({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <GroupsView organizationId={organizationId} />
+      <Suspense fallback={<p>Loading...</p>}>
+        <GroupsView organizationId={organizationId} />
+      </Suspense>
     </HydrationBoundary>
   );
 }

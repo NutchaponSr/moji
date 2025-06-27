@@ -7,7 +7,6 @@ import {
 
 import { Banner } from "@/modules/layouts/ui/components/banner";
 import { Toolbar } from "@/modules/layouts/ui/components/toolbar";
-import { LayoutsProvider } from "@/modules/layouts/ui/providers/layouts-provider";
 
 import { group } from "@/modules/layouts/constants";
 
@@ -16,6 +15,8 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 import { useTable } from "@/modules/layouts/hooks/use-table";
 import { columns } from "../components/group-columns";
+import { LayoutsProvider } from "@/modules/layouts/ui/providers/layouts-provider";
+import { useEffect, useState } from "react";
 
 interface Props {
   organizationId: string;
@@ -26,6 +27,12 @@ export const GroupsView = ({ organizationId }: Props) => {
  
   const [query] = useGroupQuery();
 
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const { data } = useSuspenseQuery(
     trpc.groups.getByYear.queryOptions({
       organizationId,
@@ -34,18 +41,28 @@ export const GroupsView = ({ organizationId }: Props) => {
   );
 
   const {
-    table
+    table,
+    globalFilter,
+    handleSearchChange,
+    handleClear
   } = useTable({
     data,
     columns
   });
 
+  if (!isMounted) return <div>Loading</div>
+
   return (
     <div className="flex flex-col grow relative overflow-auto">
       <Banner workspace={group} />
 
-      <Tabs defaultValue={new Date().getFullYear().toString()}>
-        <Toolbar table={table} />
+      <Tabs defaultValue={query.year}>
+        <Toolbar  
+          table={table}
+          value={globalFilter}
+          onChange={handleSearchChange}
+          onClear={handleClear}
+        />
         <TabsContent value={query.year}>
           <section className="grow shrink-0 flex flex-col relative">
             <LayoutsProvider table={table} />

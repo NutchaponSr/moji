@@ -8,7 +8,7 @@ import {
   useReactTable, 
   VisibilityState 
 } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { 
   FilterGroup, 
@@ -31,16 +31,16 @@ export const useTable = <T extends Record<string, unknown>>({
   const { grouping } = useGrouping();
   const { filterGroup } = useFilterStore();
 
-  const [sorting, setSorting] = useState<SortingState>(initialSorting);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(initialColumnVisibility);
-  const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(initialColumnOrder);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [sorting, setSorting] = useState<SortingState>(initialSorting);
+  const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(initialColumnOrder);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(initialColumnVisibility);
 
-  const isFilterGroupEmpty = (group: FilterGroup<T>): boolean => {
+  const isFilterGroupEmpty = useCallback((group: FilterGroup<T>): boolean => {
     return group.filters.length === 0 && group.groups.length === 0;
-  }
+  }, []);
 
-  const evaluateGroup = (group: FilterGroup<T>, row: Row<T>): boolean => {
+  const evaluateGroup = useCallback((group: FilterGroup<T>, row: Row<T>): boolean => {
     if (isFilterGroupEmpty(group)) return true;
 
     const filterResults = group.filters
@@ -62,9 +62,10 @@ export const useTable = <T extends Record<string, unknown>>({
     return group.connector === "and"
       ? allResults.every((result) => result)
       : allResults.some((result) => result);
-  }
+  }, [isFilterGroupEmpty]);
 
-  const filterData = (row: Row<T>) => {
+  // Memoize the filter function to prevent recreating it on every render
+  const filterData = useCallback((row: Row<T>) => {
     const passesFilterGroup = evaluateGroup(filterGroup, row);
 
     if (!globalFilter) return passesFilterGroup;
@@ -80,7 +81,7 @@ export const useTable = <T extends Record<string, unknown>>({
       });
     
     return passesFilterGroup && passesGlobalTextFilter;
-  }
+  }, [evaluateGroup, filterGroup, globalFilter]);
 
   const table = useReactTable({
     data,
@@ -130,7 +131,13 @@ export const useTable = <T extends Record<string, unknown>>({
     );
   }, [grouping, filteredData]);
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => setGlobalFilter(e.target.value);
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setGlobalFilter(e.target.value);
+  }, []);
+
+  const handleClear= useCallback(() => {
+    setGlobalFilter("");
+  }, []);
 
   return {
     table,
@@ -146,6 +153,7 @@ export const useTable = <T extends Record<string, unknown>>({
     setColumnOrder,
     setGlobalFilter,
     handleSearchChange,
+    handleClear,
     filterData,
   };
 }
