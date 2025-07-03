@@ -8,18 +8,20 @@ import {
   useReactTable, 
   VisibilityState 
 } from "@tanstack/react-table";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 
 import { 
   FilterGroup, 
+  GroupingProps, 
   TableProps, 
-  TableResponseType 
 } from "@/modules/layouts/types";
 
-import { compareValues } from "@/modules/layouts/utils";
+import { compareValues, createDefaultGroup, groupAndSortData, isValidGroupingConfig } from "@/modules/layouts/utils";
 
 import { useGrouping } from "@/modules/layouts/hooks/use-grouping";
 import { useFilterStore } from "@/modules/layouts/store/use-filter-store";
+import { DragEndEvent } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
 
 export const useTable = <T extends Record<string, unknown>>({
   data,
@@ -27,14 +29,18 @@ export const useTable = <T extends Record<string, unknown>>({
   initialColumnOrder = columns.map((c) => c.id!),
   initialColumnVisibility = {},
   initialSorting = [],
-}: TableProps<T>): TableResponseType<T> => {
-  const { grouping } = useGrouping();
+}: TableProps<T>) => {
   const { filterGroup } = useFilterStore();
+  const { grouping, groupingType, groupingValue, groupingSort, createVisibilityManager } = useGrouping();
 
   const [globalFilter, setGlobalFilter] = useState("");
+  const [] = useState()
   const [sorting, setSorting] = useState<SortingState>(initialSorting);
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(initialColumnOrder);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(initialColumnVisibility);
+  const [groupedData, setGroupedData] = useState<GroupingProps<T>[]>([]);
+
+  const visibilityManager = createVisibilityManager(groupedData, setGroupedData);
 
   const isFilterGroupEmpty = useCallback((group: FilterGroup<T>): boolean => {
     return group.filters.length === 0 && group.groups.length === 0;
@@ -110,26 +116,45 @@ export const useTable = <T extends Record<string, unknown>>({
   const filteredData = useMemo(() => {
     return table.getFilteredRowModel().rows.map((row) => row.original)
   }, [table]);
+
+  const onDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!active || !over || active.id === over.id) return;
+
+    const oldIndex = groupedData.findIndex(g => g.label === active.id);
+    const newIndex = groupedData.findIndex(g => g.label === over.id);
+
+    if (oldIndex !== -1 && newIndex !== -1) {
+      const reordered = arrayMove(groupedData, oldIndex, newIndex)
+        .map((group, idx) => ({ ...group, order: idx }));
+      setGroupedData(reordered); 
+    }
+  }, [groupedData]);
+
+  const hasAllHide = groupedData.every((f) => f.hidden);
   
-  const groupedData = useMemo(() => {
-    if (!grouping) {
-      return { "All data": filteredData };
+  useEffect(() => {
+    if (!grouping || !groupingValue || !groupingSort || !groupingType) {
+      setGroupedData(createDefaultGroup(filteredData));
+      return;
     }
 
-    return filteredData.reduce(
-      (groups, row) => {
-        const groupValue = row[grouping]?.toString() || "Unknown";
+    const config = {
+      column: grouping,
+      columnType: groupingType,
+      groupingValue,
+      groupingSort,
+      data: filteredData,
+    };
 
-        if (!groups[groupValue]) {
-          groups[groupValue] = [];
-        }
+    if (!isValidGroupingConfig(config)) {
+      setGroupedData(createDefaultGroup(filteredData));
+      return;
+    }
 
-        groups[groupValue].push(row);
-
-        return groups;
-      }, {} as Record<string, T[]>,
-    );
-  }, [grouping, filteredData]);
+    const newGroupedData = groupAndSortData(config);
+    setGroupedData(newGroupedData);
+  }, [grouping, groupingValue, groupingType, groupingSort, filteredData]);
 
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setGlobalFilter(e.target.value);
@@ -148,12 +173,15 @@ export const useTable = <T extends Record<string, unknown>>({
     grouping,
     groupedData,
     filteredData,
+    visibilityManager,
+    hasAllHide,
     setSorting,
     setColumnVisibility,
     setColumnOrder,
     setGlobalFilter,
     handleSearchChange,
     handleClear,
+    onDragEnd,
     filterData,
   };
 }

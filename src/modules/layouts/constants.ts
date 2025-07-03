@@ -1,5 +1,27 @@
-import { ColumnType, Workspace } from "@/modules/layouts/types";
-import { CalendarDaysIcon, HashIcon, Heading1Icon, LoaderIcon, LucideIcon } from "lucide-react";
+import { 
+  CalendarDaysIcon, 
+  ChartPieIcon, 
+  Columns3Icon, 
+  HashIcon, 
+  Heading1Icon, 
+  LayoutGridIcon, 
+  ListIcon, 
+  LoaderIcon, 
+  LucideIcon, 
+  MaximizeIcon, 
+  MinimizeIcon, 
+  NewspaperIcon, 
+  PanelRightIcon, 
+  Table2Icon
+} from "lucide-react";
+
+import { 
+  ColumnType, 
+  Layout, 
+  Peek, 
+  ViewOptionsType, 
+  Workspace 
+} from "@/modules/layouts/types";
 
 export const DEFAULT_PAGE = "/overviews";
 
@@ -51,4 +73,84 @@ export const columnSortOptions: Record<ColumnType, string[]> = {
   select: [],        
 };
 
+export const viewOptionsHeader: Record<ViewOptionsType, string> = {
+  layouts: "Layouts",
+  property: "Properties",
+  addFilter: "Add filter",
+  filter: "Filter",
+  addSort: "Add sort",
+  sort: "Sort",
+  addGrouping: "Group by",
+  grouping: "Grouping" 
+};
+
+export const groupingBy: Record<ColumnType, { label: string; }> = {
+  text: { label: "Text by" },
+  numeric: { label: "Number by" },
+  date: { label: "Date by" },
+  select: { label: "Select by" }
+}
+
 export const workspaces: Workspace[] = [group, competency, employee] as const;
+
+export const layouts: Layout[] = [
+  {
+    icon: Table2Icon,
+    label: "Table",
+    slug: "table",
+  },
+  {
+    icon: Columns3Icon,
+    label: "Board",
+    slug: "board",
+  },
+  {
+    icon: CalendarDaysIcon,
+    label: "Calendar",
+    slug: "calendar",
+  },
+  {
+    icon: ListIcon,
+    label: "List",
+    slug: "list",
+  },
+  {
+    icon: LayoutGridIcon,
+    label: "Gallery",
+    slug: "gallery",
+  },
+  {
+    icon: ChartPieIcon,
+    label: "Chart",
+    slug: "chart",
+  },
+  {
+    icon: NewspaperIcon,
+    label: "Feed",
+    slug: "feed",
+  },
+];
+
+export const peeks: Peek[] = [
+  {
+    default: true,
+    slug: "side",
+    icon: PanelRightIcon,
+    label: "Side peek",
+    description: "Open pages on the side. Keeps the view behind interactive.",
+  },
+  {
+    slug: "center",
+    icon: MinimizeIcon,
+    label: "Center peek",
+    description: "Open pages in a focused, centered modal.",
+  },
+  {
+    slug: "full",
+    icon: MaximizeIcon,
+    label: "Full page",
+    description: "Open pages in full page",
+  },
+];
+
+export const AUTO_WIDTH = ["filter", "sort"];

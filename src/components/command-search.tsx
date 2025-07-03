@@ -9,10 +9,10 @@ export const CommandSearch = ({ children, placeholder }: Props) => {
 
   return (
     <Command className="flex flex-col gap-1">
-      <div className="flex items-center p-1 pb-0">
+      <div className="flex items-center">
         <Command.Input 
           placeholder={placeholder}
-          className="shadow-[inset_0_0_0_1px_rgba(15,15,15,0.1)] dark:shadow-[0_0_0_1px_rgba(255,255,255,0)] h-7 px-2 py-0.5 rounded-sm bg-input w-full placeholder:text-xs placeholder:text-foreground placeholder:font-light text-tertiary text-sm font-normal focus:shadow-[inset_0_0_0_1px_rgba(37,132,227,0.57),0_0_0_2px_rgba(37,132,227,0.35)] focus-visible:outline-none"
+          className="shadow-[inset_0_0_0_1px_rgba(15,15,15,0.1)] dark:shadow-[0_0_0_1px_rgba(255,255,255,0)] h-7 px-2 py-0.5 rounded-sm bg-input w-full placeholder:font-light placeholder:text-foreground text-tertiary text-sm font-normal focus:shadow-[inset_0_0_0_1px_rgba(37,132,227,0.57),0_0_0_2px_rgba(37,132,227,0.35)] focus-visible:outline-none"
         />
       </div>
       <Command.List className="relative flex flex-col focus:outline-none">

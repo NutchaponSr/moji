@@ -24,6 +24,7 @@ export const invitationColumns: ColumnDef<InvitationWithoutOrganization>[] = [
       </div>
     ),
     meta: {
+      variant: "text",
       width: "40%",
     }
   },
@@ -63,6 +64,7 @@ export const invitationColumns: ColumnDef<InvitationWithoutOrganization>[] = [
       </div>
     ),
     meta: {
+      variant: "text",
       width: "5%"
     }
   }

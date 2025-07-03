@@ -1,5 +1,5 @@
-import { Column } from "@tanstack/react-table";
-import { FilterIcon, PlusCircleIcon } from "lucide-react";
+import { Table } from "@tanstack/react-table";
+import { FunnelPlusIcon, ListFilterIcon, PlusCircleIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -17,10 +17,10 @@ import { FilterList } from "@/modules/layouts/ui/components/filter-list";
 import { useFilter } from "@/modules/layouts/hooks/use-filter";;
 
 interface Props<T> {
-  columns: Column<T>[];
+  table: Table<T>;
 }
 
-export const FilterPopover = <T,>({ columns }: Props<T>) => {
+export const FilterPopover = <T,>({ table }: Props<T>) => {
   const {
     isFiltering,
     sortedItems,
@@ -38,7 +38,7 @@ export const FilterPopover = <T,>({ columns }: Props<T>) => {
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="icon" size="icon">
-          <FilterIcon className={cn(isFiltering && "text-marine")} />
+          <ListFilterIcon className={cn(isFiltering && "text-marine")} />
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="p-0 w-auto select-none">
@@ -55,7 +55,7 @@ export const FilterPopover = <T,>({ columns }: Props<T>) => {
         {isFiltering && (
           <FilterList
             items={sortedItems}
-            columns={columns}
+            columns={table.getAllColumns()}
             connector={connector}
             onChangeConnector={setConnector}
             onUpdateFilter={updateFilter}
@@ -66,7 +66,13 @@ export const FilterPopover = <T,>({ columns }: Props<T>) => {
         )}
 
         <div className="flex flex-row items-center p-2 gap-1">
-          <AddFilter columns={columns} onSelect={addFilter} />
+          
+          <AddFilter asChild mode="popover" columns={table.getAllColumns()} onSelect={addFilter}>
+          <Button variant="outline" size="xs">
+            <FunnelPlusIcon className="size-3.5" />
+              Add condition
+            </Button>
+          </AddFilter>
           <Button 
             size="xs" 
             variant="outline" 

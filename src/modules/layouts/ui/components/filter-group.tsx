@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Column } from "@tanstack/react-table";
-import { PlusCircleIcon, Trash2Icon } from "lucide-react";
+import { FunnelPlusIcon, PlusCircleIcon, Trash2Icon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -65,6 +65,8 @@ export const FilterGroup = <T,>({
       )}
       <div className="flex flex-row items-center gap-1">
         <AddFilter 
+          asChild
+          mode="popover"
           columns={columns}
           onSelect={(column, columnType) => onUpdate({
             ...filter,
@@ -79,7 +81,12 @@ export const FilterGroup = <T,>({
               },
             ],
           })}
-        />
+        >
+          <Button variant="outline" size="xs">
+            <FunnelPlusIcon className="size-3.5" />
+            Add condition
+          </Button>
+        </AddFilter>
         <Button 
           size="xs" 
           variant="outline" 

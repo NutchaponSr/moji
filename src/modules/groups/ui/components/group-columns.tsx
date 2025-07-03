@@ -1,7 +1,7 @@
 import { Icon } from "@iconify-icon/react";
-
 import { ColumnDef } from "@tanstack/react-table";
-import { Group } from "../../types";
+
+import { Group } from "@/modules/groups/types";
 import { columnIcons } from "@/modules/layouts/constants";
 
 export const columns: ColumnDef<Group>[] = [
@@ -30,10 +30,39 @@ export const columns: ColumnDef<Group>[] = [
         </button>
       </div>
     ),
+    enableHiding: false,
     meta: {
       width: "295px",
       icon: columnIcons["text"],
       variant: "text"
+    }
+  },
+  {
+    accessorKey: "year",
+    header: () => (
+      <button className="hover:bg-primary/4 transition flex items-center px-2 w-full h-full">
+        <div className="flex items-center leading-[120%] min-w-0 text-sm flex-1">
+          <span className="whitespace-nowrap text-ellipsis overflow-hidden">
+            Year
+          </span>
+        </div>
+      </button>
+    ),
+    cell: ({ row }) => (
+      <div className="flex overflow-x-clip h-full w-full">
+        <button className="tranistion relative block text-sm overflow-clip w-full whitespace-nowrap h-9 min-h-9 p-2">
+          <div className="flex items-center justify-start gap-1.5">
+            <span className="leading-1.5 whitespace-nowrap break-words inline-flex font-medium mr-1">
+              {row.getValue("year")}
+            </span>
+          </div>
+        </button>
+      </div>
+    ),
+    meta: {
+      width: "128px",
+      icon: columnIcons["numeric"],
+      variant: "numeric"
     }
   }
 ]

@@ -24,7 +24,7 @@ export const InviteLink = ({ invitationId }: Props) => {
   return (
     <Hint label="Copied" open={isCopied}>
       <div onClick={handleCopy}>
-        <span className="text-tertiary underline select-none whitespace-nowrap overflow-hidden text-ellipsis hover:text-destructive hover:cursor-pointer">
+        <span className="text-tertiary underline select-none whitespace-nowrap overflow-hidden text-ellipsis hover:text-danger hover:cursor-pointer">
           {splitWord}
         </span>
       </div>
