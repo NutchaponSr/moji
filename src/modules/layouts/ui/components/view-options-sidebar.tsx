@@ -19,8 +19,6 @@ import { Sort } from "./sort";
 import { useSort } from "../../hooks/use-sort";
 import { AddGrouping } from "./add-grouping";
 import { Grouping } from "./grouping";
-import { GroupingProps } from "../../types";
-import { DragEndEvent } from "@dnd-kit/core";
 
 interface Props<T> {
   position: {
@@ -28,15 +26,7 @@ interface Props<T> {
     left: number;
   };
   table: Table<T>;
-  hasAllHide: boolean;
-  groupedData: GroupingProps<T>[];
-  visibilityManager: {
-    hideGroup: (groupLabel: string) => void;
-    showGroup: (groupLabel: string) => void;
-    toggleAllGroups: () => void;
-  },
   onClose: () => void;
-  onDragEnd: (e: DragEndEvent) => void;
 }
 
 export const ViewOptionsSidebar = <T,>({ position, ...props }: Props<T>) => {

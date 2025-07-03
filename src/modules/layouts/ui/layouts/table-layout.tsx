@@ -4,16 +4,14 @@ import { Accordion, AccordionItem } from "@/components/ui/accordion";
 import { DataTable } from "../components/data-table";
 import { useState } from "react";
 import { GroupingLayout } from "./grouping-layout";
-import { GroupingProps } from "../../types";
 
 interface Props<T> {
   table: Table<T>;
-  groupedData: GroupingProps<T>[];
   filterData: (row: Row<T>) => boolean;
 }
 
-export const TableLayout = <T,>({ table, groupedData, ...props }: Props<T>) => {
-  const { isGrouping } = useGrouping();
+export const TableLayout = <T,>({ table, ...props }: Props<T>) => {
+  const { isGrouping, groupedData } = useGrouping(table);
 
   const [values, setValues] = useState<string[]>([]);
 

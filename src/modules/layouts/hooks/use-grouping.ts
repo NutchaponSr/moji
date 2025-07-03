@@ -9,9 +9,13 @@ import {
 
 import { useGroupingStore } from "@/modules/layouts/store/use-grouping-store";
 import { ColumnType, dateBy, dateSort, GroupingProps, NumericBy, numericSort, selectBy, selectSort, textBy, textSort } from "../types";
-import { getVisibilityStats, getHiddenGroups, getVisibleGroups, showAllGroups, hideAllGroups, hideGroup, showGroup, toggleGroupVisibility, toggleMultipleGroups, setMultipleGroupsVisibility } from "../utils";
+import { createDefaultGroup, isValidGroupingConfig, groupAndSortData } from "../utils";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { DragEndEvent } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
 
-export const useGrouping = () => {
+export const useGrouping = <T>(table: Table<T>) => {
+  // Store state
   const grouping = useGroupingStore((state) => state.grouping);
   const groupingSort = useGroupingStore((state) => state.groupingSort);
   const groupingValue = useGroupingStore((state) => state.groupingValue);
@@ -20,9 +24,15 @@ export const useGrouping = () => {
   const onChangeOption = useGroupingStore((state) => state.onSetGroupingValue);
   const onChangeSort = useGroupingStore((state) => state.onSetGroupingSort);
 
+  // Computed values
   const isGrouping = grouping !== null;
-  const groupingType = grouping?.columnDef.meta?.variant; 
+  const groupingType = grouping?.columnDef.meta?.variant;
+  const data = useMemo(() => table.getFilteredRowModel().rows.map((row) => row.original), [table]);
 
+  // Grouped data state
+  const [groupedData, setGroupedData] = useState<GroupingProps<T>[]>([]);
+
+  // Utility functions
   const getGroupingDescription = () => {
     if (!groupingValue || !groupingType) return "";
     
@@ -57,7 +67,7 @@ export const useGrouping = () => {
       default:
         return [];
     }
-  }
+  };
 
   const getSortOptions = (columnType?: ColumnType) => {
     const type = columnType || groupingType;
@@ -74,73 +84,144 @@ export const useGrouping = () => {
       default:
         return [];
     }
-  }
+  };
 
   const isValidGrouping = () => {
     return isGrouping && groupingType !== null;
   };
 
-  const createVisibilityManager = <T>(groupedData: GroupingProps<T>[], setGroupedData: (data: GroupingProps<T>[]) => void) => ({
-    toggleGroup: (groupLabel: string) => {
-      setGroupedData(toggleGroupVisibility(groupedData, groupLabel));
-    },
-    hideGroup: (groupLabel: string) => {
-      setGroupedData(hideGroup(groupedData, groupLabel));
-    },
-    showGroup: (groupLabel: string) => {
-      setGroupedData(showGroup(groupedData, groupLabel));
-    },
-    hideAllGroups: () => {
-      setGroupedData(hideAllGroups(groupedData));
-    },
-    showAllGroups: () => {
-      setGroupedData(showAllGroups(groupedData));
-    },
-    getVisibleGroups: () => getVisibleGroups(groupedData),
-    getHiddenGroups: () => getHiddenGroups(groupedData),
-    getVisibilityStats: () => getVisibilityStats(groupedData),
-    toggleMultipleGroups: (groupLabels: string[]) => {
-      setGroupedData(toggleMultipleGroups(groupedData, groupLabels));
-    },
-    setMultipleGroupsVisibility: (groupLabels: string[], hidden: boolean) => {
-      setGroupedData(setMultipleGroupsVisibility(groupedData, groupLabels, hidden));
-    },
-    toggleAllGroups: () => {
-      const allHidden = getHiddenGroups(groupedData).length === groupedData.length;
-      if (allHidden) {
-        setGroupedData(showAllGroups(groupedData));
-      } else {
-        setGroupedData(hideAllGroups(groupedData));
-      }
-    }
-  });
+  // Group management callbacks
+  const onToggleAll = useCallback(() => {
+    setGroupedData(groupedData.map((group) => ({
+      ...group,
+      hidden: !group.hidden,
+    })));
+  }, [groupedData]);
 
+  const onHide = useCallback((label: string) => {
+    setGroupedData(() => {
+      const updated = groupedData.map(group =>
+        group.label === label ? { ...group, hidden: true } : group
+      );
+    
+      const sorted = [
+        ...updated.filter(g => !g.hidden),
+        ...updated.filter(g => g.hidden),
+      ];
+    
+      return sorted.map((group, idx) => ({ ...group, order: idx }));
+    });
+  }, [groupedData]);
+
+  const onShow = useCallback((label: string) => {
+    setGroupedData(() => {
+      const updated = groupedData.map(group =>
+        group.label === label ? { ...group, hidden: false } : group
+      );
+    
+      const sorted = [
+        ...updated.filter(g => !g.hidden),
+        ...updated.filter(g => g.hidden),
+      ];
+    
+      return sorted.map((group, idx) => ({ ...group, order: idx }));
+    });
+  }, [groupedData]);
+
+  const onDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!active || !over || active.id === over.id) return;
+
+    const oldIndex = groupedData.findIndex(g => g.label === active.id);
+    const newIndex = groupedData.findIndex(g => g.label === over.id);
+
+    if (oldIndex !== -1 && newIndex !== -1) {
+      // Check if we need to change sort to manual for text grouping
+      if (groupingType === "text" && 
+          groupingSort && 
+          ["alphabetical", "reverseAlphabetical"].includes(groupingSort)) {
+        onChangeSort("manual");
+      }
+
+      const reordered = arrayMove(groupedData, oldIndex, newIndex)
+        .map((group, idx) => ({ ...group, order: idx }));
+      setGroupedData(reordered); 
+    }
+  }, [groupedData, groupingSort, groupingType, onChangeSort]);
+
+  // This will be handled by a separate hook
+
+  // Computed values for grouped data
+  const hasAllHide = groupedData.every((f) => f.hidden);
+
+  // Effect to update grouped data when grouping changes
+  useEffect(() => {
+    if (!grouping || !groupingValue || !groupingSort || !groupingType) {
+      setGroupedData(createDefaultGroup(data));
+      return;
+    }
+
+    const config = {
+      data,
+      column: grouping,
+      columnType: groupingType,
+      groupingValue,
+      groupingSort,
+    };
+
+    if (!isValidGroupingConfig(config)) {
+      setGroupedData(createDefaultGroup(data));
+      return;
+    }
+
+    const newGroupedData = groupAndSortData(config);
+    setGroupedData(newGroupedData);
+  }, [grouping, groupingValue, groupingType, groupingSort, data]);
 
   return {
+    // Basic grouping state
     isGrouping,
     grouping,
     groupingType,
     groupingValue,
     groupingSort,
     isValidGrouping,
+    
+    // Store actions
     onSelect,
     onChangeOption,
     onChangeSort,
     onRemove,
+    
+    // Utility functions
     getSortOptions,
     getGroupingOptions,
     getGroupingDescription,
-    createVisibilityManager
-  }
-}
+    
+    // Grouped data management
+    groupedData,
+    hasAllHide,
+    onDragEnd,
+    onToggleAll,
+    onHide,
+    onShow,
+    
+    // Table creation - use separate hook
+    // createGroupingTable,
+    
+    // Data
+    data,
+  };
+};
 
-interface Props<T> {
+// Separate hook for table creation
+interface UseGroupingTableProps<T> {
   table: Table<T>;
   row: T[];
   filterData: (row: Row<T>) => boolean;
 }
 
-export const useGroupingTable = <T,>({ table, row, filterData }: Props<T>) => {
+export const useGroupingTable = <T,>({ table, row, filterData }: UseGroupingTableProps<T>) => {
   return useReactTable({
     data: row,
     columns: table.getAllColumns().map((col) => col.columnDef),
@@ -160,4 +241,4 @@ export const useGroupingTable = <T,>({ table, row, filterData }: Props<T>) => {
       },
     },
   });
-}
+};
