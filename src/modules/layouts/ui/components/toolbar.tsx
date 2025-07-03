@@ -3,57 +3,116 @@ import {
   Settings2Icon, 
   ZapIcon
 } from "lucide-react";
+import {
+  useCallback, 
+  useEffect, 
+  useRef, 
+  useState 
+} from "react";
 import { Icon } from "@iconify-icon/react";
 import { Table } from "@tanstack/react-table";
-import { useToggle } from "@uidotdev/usehooks";
 import { AnimatePresence, motion } from "framer-motion";
 
+import { useToggle } from "@/hooks/use-toggle";
+
+import { 
+  TabsList, 
+  TabsTrigger 
+} from "@/components/ui/tabs";
+import { 
+  ScrollArea, 
+  ScrollBar 
+} from "@/components/ui/scroll-area";
+import { 
+  Popover, 
+  PopoverTrigger 
+} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 import { SortPopover } from "@/modules/layouts/ui/components/sort-popover";
 import { FilterPopover } from "@/modules/layouts/ui/components/filter-popover";
-
-import { useGroupQuery } from "@/modules/groups/hooks/use-group-query";
+import { ViewOptionsSidebar } from "@/modules/layouts/ui/components/view-options-sidebar";
+import { GroupingProps } from "../../types";
+import { DragEndEvent } from "@dnd-kit/core";
 
 interface Props<T> {
+  tabLists: {
+    value: string;
+    onChange: () => void;
+  }[];
   table: Table<T>;
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  hasAllHide: boolean;
+  groupedData: GroupingProps<T>[];
+  visibilityManager: {
+    hideGroup: (groupLabel: string) => void;
+    showGroup: (groupLabel: string) => void;
+    toggleAllGroups: () => void;
+  },
   onClear: () => void;
+  onDragEnd: (e: DragEndEvent) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 } 
 
 export const Toolbar = <T,>({ 
   table,
+  tabLists,
   value,
+  hasAllHide,
+  groupedData,
+  visibilityManager,
   onChange,
+  onDragEnd,
   onClear
 }: Props<T>) => {
-  const [showSearch, toggle] = useToggle(false);
+  const [position, setPosition] = useState({ top: 0, left: 0 });
 
-  const [, setQuery] = useGroupQuery();
+  const [showSearch, toggleSearch] = useToggle(false);
+  const [showSidebar, toggleSidebar, setSidebar] = useToggle(false);
+
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  const handleClose = useCallback(() => {
+    setSidebar(false);
+  }, [setSidebar]);
+
+  useEffect(() => {
+    if (showSidebar && triggerRef.current) {
+      const triggerRect = triggerRef.current.getBoundingClientRect();
+
+      const scrollX = window.scrollX;
+      const scrollY = window.scrollY;
+
+      setPosition({
+        top: triggerRect.bottom + scrollY + 6,
+        left: triggerRect.left + scrollX + triggerRect.width / 2,
+      });
+    }
+  }, [showSidebar]);
 
   return (
     <ScrollArea className="px-24 min-h-9 sticky left-0 shrink-0 x-86 w-full">
       <div className="flex items-center h-9 left-24 w-full border-b-[1.5px]">
         <TabsList className="flex items-center h-full grow overflow-hidden">
-          <TabsTrigger value="2025" onClick={() => setQuery({ year: "2025" })}>
-            2025
-          </TabsTrigger>
-          <TabsTrigger value="2024" onClick={() => setQuery({ year: "2024" })}>
-            2024
-          </TabsTrigger>
+          {tabLists.map((tab) => (
+            <TabsTrigger
+              key={tab.value}
+              value={tab.value}
+              onClick={tab.onChange}
+            >
+              {tab.value}
+            </TabsTrigger>
+          ))}
         </TabsList>
         <div className="grow h-full">
           <div className="flex flex-row items-center justify-end h-full gap-1">
-            <FilterPopover columns={table.getAllColumns()} />
+            <FilterPopover table={table} />
             <SortPopover table={table} />
             <Button variant="icon" size="icon">
               <ZapIcon />
             </Button>
 
-            <Button variant="icon" size="icon" onClick={() => toggle()}>
+            <Button variant="icon" size="icon" onClick={toggleSearch}>
               <SearchIcon />
             </Button>
             <AnimatePresence>
@@ -82,9 +141,26 @@ export const Toolbar = <T,>({
               )}
             </AnimatePresence>
 
-            <Button variant="icon" size="icon">
-              <Settings2Icon />
-            </Button>
+            <Popover
+              modal
+              open={showSidebar}
+              onOpenChange={handleClose}
+            >
+              <PopoverTrigger asChild>
+                <Button variant="icon" size="icon" onClick={() => setTimeout(() => toggleSidebar(), 50)}>
+                  <Settings2Icon />
+                </Button>
+              </PopoverTrigger>
+              <ViewOptionsSidebar 
+                table={table}
+                groupedData={groupedData}
+                position={position}
+                onClose={handleClose}
+                onDragEnd={onDragEnd}
+                hasAllHide={hasAllHide}
+                visibilityManager={visibilityManager}
+              />
+            </Popover>
             <div className="ml-1">
               <Button variant="primary" size="sm" className="font-semibold">
                 New

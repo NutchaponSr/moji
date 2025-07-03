@@ -59,7 +59,7 @@ export const SortItem = <T,>({
       <Separator orientation="vertical" />
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="ghost"size="sm" className="justify-between min-w-40 rounded-none">
+          <Button variant="ghost"size="sm" className="justify-between min-w-[150px] rounded-none">
             <span className="flex items-center gap-1 whitespace-nowrap font-medium capitalize">
               {column.icon && <column.icon className="size-4" />}             
               {column.id}

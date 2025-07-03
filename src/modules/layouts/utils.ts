@@ -1,4 +1,4 @@
-import { ColumnType } from "@/modules/layouts/types";
+import { ColumnType, GroupingConfig, GroupingProps, GroupingSort, GroupingValue, NumericBy } from "@/modules/layouts/types";
 
 export function compareValues(
   value: string | number,
@@ -37,3 +37,456 @@ export function compareValues(
 
   return true;
 }
+
+export function getAlphabetGroup(value: string) {
+  const firstChar = value.charAt(0).toUpperCase();
+  return /[A-Z]/.test(firstChar) ? firstChar : "#";
+}
+
+export function getDateGroup(value: string, groupBy: string) {
+  const date = new Date(value);
+  
+  if (isNaN(date.getTime())) return "Invalid Date";
+
+  const now = new Date();
+  const diffTime = now.getTime() - date.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  switch (groupBy) {
+    case "relative":
+      if (diffDays <= 1) return "Today";
+      if (diffDays <= 7) return "This week";
+      if (diffDays <= 30) return "This month";
+      if (diffDays <= 365) return "This year";
+      return "Older";
+    case "day":
+      return date.toLocaleDateString();
+    case "week":
+      const weekStart = new Date(date);
+      weekStart.setDate(date.getDate() - date.getDay());
+      return `Week of ${weekStart.toLocaleDateString()}`;
+    case "month":
+      return date.toLocaleDateString(undefined, { year: 'numeric', month: 'long' });
+    case "year":
+      return date.getFullYear().toString();
+    default:
+      return value;
+  }
+}
+
+/**
+ * Get numeric group based on range
+ */
+const getNumericGroup = (value: string, range: NumericBy): string => {
+  const numValue = parseFloat(value);
+  if (isNaN(numValue)) return "Invalid Number";
+  
+  if (numValue >= range.from && numValue <= range.to) {
+    return `${range.from} - ${range.to}`;
+  }
+  
+  // Create additional ranges for values outside the specified range
+  const rangeSize = range.to - range.from;
+  const lowerBound = Math.floor(numValue / rangeSize) * rangeSize;
+  const upperBound = lowerBound + rangeSize;
+  
+  return `${lowerBound} - ${upperBound}`;
+};
+
+/**
+ * Get select group based on grouping type
+ */
+const getSelectGroup = (value: string, groupBy: string): string => {
+  if (groupBy === "group") {
+    // Assuming select options have groups separated by ':'
+    // You might need to adjust this based on your select data structure
+    return value.split(':')[0] || value;
+  } else {
+    // option
+    return value;
+  }
+};
+
+/**
+ * Get group value based on column type and grouping value
+ */
+const getGroupValue = (
+  cellValue: string,
+  columnType: ColumnType,
+  groupingValue: GroupingValue
+): string => {
+  switch (columnType) {
+    case "text":
+      if (groupingValue === "alphabetical") {
+        return getAlphabetGroup(cellValue);
+      } else {
+        // exact
+        return cellValue;
+      }
+    case "date":
+      return getDateGroup(cellValue, groupingValue as string);
+    case "select":
+      return getSelectGroup(cellValue, groupingValue as string);
+    case "numeric":
+      return getNumericGroup(cellValue, groupingValue as NumericBy);
+    default:
+      return cellValue;
+  }
+};
+
+/**
+ * Sort grouped data based on column type and sort option
+ */
+const sortGroupedData = <T>(
+  GroupingProps: GroupingProps<T>[],
+  columnType: ColumnType,
+  groupingSort: GroupingSort
+): GroupingProps<T>[] => {
+  let sortedData = [...GroupingProps];
+  
+  switch (columnType) {
+    case "text":
+      switch (groupingSort) {
+        case "alphabetical":
+          sortedData = sortedData.sort((a, b) => {
+            if (a.label === '#' && b.label !== '#') return 1;
+            if (b.label === '#' && a.label !== '#') return -1;
+            return a.label.localeCompare(b.label);
+          });
+          break;
+        case "reverseAlphabetical":
+          sortedData = sortedData.sort((a, b) => {
+            if (a.label === '#' && b.label !== '#') return -1;
+            if (b.label === '#' && a.label !== '#') return 1;
+            return b.label.localeCompare(a.label);
+          });
+          break;
+        case "manual":
+          // Keep original order
+          break;
+      }
+      break;
+      
+    case "date":
+      switch (groupingSort) {
+        case "oldestFirst":
+          sortedData = sortedData.sort((a, b) => {
+            // Handle relative dates
+            const dateOrder = ["Today", "This week", "This month", "This year", "Older"];
+            const indexA = dateOrder.indexOf(a.label);
+            const indexB = dateOrder.indexOf(b.label);
+            
+            if (indexA !== -1 && indexB !== -1) {
+              return indexA - indexB;
+            }
+            
+            // For actual dates, parse and compare
+            const dateA = new Date(a.label);
+            const dateB = new Date(b.label);
+            
+            if (!isNaN(dateA.getTime()) && !isNaN(dateB.getTime())) {
+              return dateA.getTime() - dateB.getTime();
+            }
+            
+            return a.label.localeCompare(b.label);
+          });
+          break;
+        case "newestFirst":
+          sortedData = sortedData.sort((a, b) => {
+            const dateOrder = ["Today", "This week", "This month", "This year", "Older"];
+            const indexA = dateOrder.indexOf(a.label);
+            const indexB = dateOrder.indexOf(b.label);
+            
+            if (indexA !== -1 && indexB !== -1) {
+              return indexB - indexA;
+            }
+            
+            const dateA = new Date(a.label);
+            const dateB = new Date(b.label);
+            
+            if (!isNaN(dateA.getTime()) && !isNaN(dateB.getTime())) {
+              return dateB.getTime() - dateA.getTime();
+            }
+            
+            return b.label.localeCompare(a.label);
+          });
+          break;
+      }
+      break;
+      
+    case "select":
+      switch (groupingSort) {
+        case "ascending":
+          sortedData = sortedData.sort((a, b) => a.label.localeCompare(b.label));
+          break;
+        case "descending":
+          sortedData = sortedData.sort((a, b) => b.label.localeCompare(a.label));
+          break;
+        case "manual":
+          // Keep original order
+          break;
+      }
+      break;
+      
+    case "numeric":
+      switch (groupingSort) {
+        case "ascending":
+          sortedData = sortedData.sort((a, b) => {
+            const numA = parseFloat(a.label.split(' - ')[0]);
+            const numB = parseFloat(b.label.split(' - ')[0]);
+            return numA - numB;
+          });
+          break;
+        case "descending":
+          sortedData = sortedData.sort((a, b) => {
+            const numA = parseFloat(a.label.split(' - ')[0]);
+            const numB = parseFloat(b.label.split(' - ')[0]);
+            return numB - numA;
+          });
+          break;
+      }
+      break;
+  }
+  
+  // Update order after sorting
+  return sortedData.map((group, idx) => ({
+    ...group,
+    order: idx,
+  }));
+};
+
+/**
+ * Group and sort data based on configuration
+ */
+export const groupAndSortData = <T>({
+  column,
+  columnType,
+  groupingValue,
+  groupingSort,
+  data,
+}: GroupingConfig<T>): GroupingProps<T>[] => {
+  // Group the data
+  const groupMap: Record<string, T[]> = data.reduce(
+    (groups, row) => {
+      const rowTyped = row as Record<string, unknown>;
+      const cellValue = rowTyped[column.id]?.toString() || "Unknown";
+      const groupValue = getGroupValue(cellValue, columnType, groupingValue);
+
+      if (!groups[groupValue]) {
+        groups[groupValue] = [];
+      }
+      groups[groupValue].push(row);
+      return groups;
+    },
+    {} as Record<string, T[]>
+  );
+
+  // Convert to array format
+  const GroupingProps = Object.entries(groupMap).map(([label, data], idx) => ({
+    order: idx,
+    label,
+    data,
+    hidden: false,
+  }));
+
+  // Apply sorting
+  return sortGroupedData(GroupingProps, columnType, groupingSort);
+};
+
+/**
+ * Create default "All data" group
+ */
+export const createDefaultGroup = <T>(data: T[]): GroupingProps<T>[] => {
+  return [
+    {
+      order: 0,
+      label: "All data",
+      data,
+      hidden: false,
+    },
+  ];
+};
+
+/**
+ * Get group description for display
+ */
+export const getGroupDescription = (
+  groupingValue: GroupingValue | null,
+  columnType: ColumnType | null
+): string => {
+  if (!groupingValue || !columnType) return "";
+  
+  switch (columnType) {
+    case "numeric":
+      const numericValue = groupingValue as NumericBy;
+      return `${numericValue.from} to ${numericValue.to}`;
+    case "text":
+    case "date":
+    case "select":
+      // For these types, groupingValue should be a string that matches option values
+      // You might want to pass the options array to get the proper label
+      return groupingValue.toString();
+    default:
+      return groupingValue.toString();
+  }
+};
+
+/**
+ * Validate if grouping configuration is valid
+ */
+export const isValidGroupingConfig = <T>(config: Partial<GroupingConfig<T>>): boolean => {
+  return !!(
+    config.column &&
+    config.columnType &&
+    config.groupingValue !== null &&
+    config.groupingSort !== null &&
+    config.data
+  );
+};
+
+/**
+ * Toggle visibility of a specific group
+ */
+export const toggleGroupVisibility = <T>(
+  GroupingProps: GroupingProps<T>[],
+  groupLabel: string
+): GroupingProps<T>[] => {
+  return GroupingProps.map(group => 
+    group.label === groupLabel 
+      ? { ...group, hidden: !group.hidden }
+      : group
+  );
+};
+
+/**
+ * Hide a specific group
+ */
+export const hideGroup = <T>(
+  GroupingProps: GroupingProps<T>[],
+  groupLabel: string
+): GroupingProps<T>[] => {
+  // First, mark the group as hidden
+  const updated = GroupingProps.map(group =>
+    group.label === groupLabel ? { ...group, hidden: true } : group
+  );
+
+  // Sort: visible groups first, then hidden ones
+  const sorted = [
+    ...updated.filter(g => !g.hidden),
+    ...updated.filter(g => g.hidden),
+  ];
+
+  // Reassign order
+  return sorted.map((group, idx) => ({ ...group, order: idx }));
+};
+
+/**
+ * Show a specific group
+ */
+export const showGroup = <T>(
+  GroupingProps: GroupingProps<T>[],
+  groupLabel: string
+): GroupingProps<T>[] => {
+  // First, mark the group as visible
+  const updated = GroupingProps.map(group =>
+    group.label === groupLabel ? { ...group, hidden: false } : group
+  );
+
+  // Sort: visible groups first, then hidden
+  const sorted = [
+    ...updated.filter(g => !g.hidden),
+    ...updated.filter(g => g.hidden),
+  ];
+
+  // Reassign order
+  return sorted.map((group, idx) => ({ ...group, order: idx }));
+};
+
+/**
+ * Hide all groups
+ */
+export const hideAllGroups = <T>(
+  GroupingProps: GroupingProps<T>[]
+): GroupingProps<T>[] => {
+  return GroupingProps.map(group => ({ ...group, hidden: true }));
+};
+
+/**
+ * Show all groups
+ */
+export const showAllGroups = <T>(
+  GroupingProps: GroupingProps<T>[]
+): GroupingProps<T>[] => {
+  return GroupingProps.map(group => ({ ...group, hidden: false }));
+};
+
+/**
+ * Get only visible groups
+ */
+export const getVisibleGroups = <T>(
+  GroupingProps: GroupingProps<T>[]
+): GroupingProps<T>[] => {
+  return GroupingProps.filter(group => !group.hidden);
+};
+
+/**
+ * Get only hidden groups
+ */
+export const getHiddenGroups = <T>(
+  GroupingProps: GroupingProps<T>[]
+): GroupingProps<T>[] => {
+  return GroupingProps.filter(group => group.hidden);
+};
+
+/**
+ * Get visibility stats
+ */
+export const getVisibilityStats = <T>(
+  GroupingProps: GroupingProps<T>[]
+): {
+  total: number;
+  visible: number;
+  hidden: number;
+  visibleDataCount: number;
+  hiddenDataCount: number;
+} => {
+  const visible = GroupingProps.filter(group => !group.hidden);
+  const hidden = GroupingProps.filter(group => group.hidden);
+  
+  return {
+    total: GroupingProps.length,
+    visible: visible.length,
+    hidden: hidden.length,
+    visibleDataCount: visible.reduce((sum, group) => sum + group.data.length, 0),
+    hiddenDataCount: hidden.reduce((sum, group) => sum + group.data.length, 0),
+  };
+};
+
+/**
+ * Bulk toggle groups by labels
+ */
+export const toggleMultipleGroups = <T>(
+  GroupingProps: GroupingProps<T>[],
+  groupLabels: string[]
+): GroupingProps<T>[] => {
+  return GroupingProps.map(group => 
+    groupLabels.includes(group.label)
+      ? { ...group, hidden: !group.hidden }
+      : group
+  );
+};
+
+/**
+ * Set visibility for multiple groups
+ */
+export const setMultipleGroupsVisibility = <T>(
+  GroupingProps: GroupingProps<T>[],
+  groupLabels: string[],
+  hidden: boolean
+): GroupingProps<T>[] => {
+  return GroupingProps.map(group => 
+    groupLabels.includes(group.label)
+      ? { ...group, hidden }
+      : group
+  );
+};
