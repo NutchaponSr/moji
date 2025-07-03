@@ -4,42 +4,38 @@ import { useGrouping } from "../../hooks/use-grouping";
 import { EyeIcon, EyeOffIcon, GripVerticalIcon, Trash2Icon } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { GroupingProps } from "../../types";
-import { closestCenter, DndContext, DragEndEvent, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { restrictToFirstScrollableAncestor, restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { CSS } from "@dnd-kit/utilities";
 import { groupingBy } from "../../constants";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-
+import { Table } from "@tanstack/react-table";
 interface Props<T> {
-  hasAllHide: boolean;
-  groupedData: GroupingProps<T>[];
-  visibilityManager: {
-    hideGroup: (groupLabel: string) => void;
-    showGroup: (groupLabel: string) => void;
-    toggleAllGroups: () => void;
-  },
-  onDragEnd: (e: DragEndEvent) => void;
+  table: Table<T>;
 }
 
 export const Grouping = <T,>({ 
-  hasAllHide,
-  groupedData, 
-  visibilityManager,
-  onDragEnd 
+  table
 }: Props<T>) => {
   const {
     grouping, 
     groupingType, 
     groupingSort,
+    groupedData,
+    hasAllHide,
+    onToggleAll,
+    onHide,
+    onDragEnd,
+    onShow,
     onRemove, 
     getSortOptions,
     getGroupingDescription,
     getGroupingOptions,
     onChangeOption,
     onChangeSort,
-  } = useGrouping();
+  } = useGrouping(table);
+
   const { viewOptions, onChange, ...props } = useViewOptionsStore();
 
   const sensors = useSensors(
@@ -103,7 +99,7 @@ export const Grouping = <T,>({
               Groups
               <div 
                 role="button"
-                onClick={visibilityManager.toggleAllGroups}
+                onClick={onToggleAll}
                 className="transition cursor-pointer inline-flex items-center rounded-sm py-0.5 px-1.5 whitespace-nowrap leading-[1.2] text-marine hover:bg-marine/7"
               >
                 {hasAllHide ? "Show all" : "Hide all"}
@@ -125,8 +121,8 @@ export const Grouping = <T,>({
                     label={item.label}
                     isHidden={item.hidden}
                     onClick={() => item.hidden 
-                      ? visibilityManager.showGroup(item.label) 
-                      : visibilityManager.hideGroup(item.label)
+                      ? onShow(item.label) 
+                      : onHide(item.label)
                     }
                   />
                 ))}
@@ -182,7 +178,11 @@ export const GroupingItem = ({
     <div ref={setNodeRef} style={style} className="flex items-center gap-2 leading-[120%] w-full select-none min-h-7 text-sm px-2">
       <div className="flex-1 whitespace-nowrap overflow-hidden text-ellipsis">
         <div className="flex items-center gap-2">
-          <div {...attributes} {...listeners} className="flex items-center justify-center w-4.5 h-6 shrink-0 rounded cursor-grab hover:bg-accent">
+          <div 
+            {...attributes} 
+            {...listeners} 
+            className="flex items-center justify-center w-4.5 h-6 shrink-0 rounded cursor-grab hover:bg-accent"
+          >
             <GripVerticalIcon className="size-4 text-muted" />
           </div>
           <span className="text-primary first-letter:uppercase">

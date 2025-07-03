@@ -13,7 +13,7 @@ interface Props<T> {
 }
 
 export const AddGrouping = <T,>({ table }: Props<T>) => {
-  const { isGrouping, grouping, onSelect } = useGrouping();
+  const { isGrouping, grouping, onSelect } = useGrouping(table);
   const { viewOptions, onChange, ...props } = useViewOptionsStore();
 
   if (viewOptions !== "addGrouping") return null;

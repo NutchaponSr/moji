@@ -2,11 +2,8 @@ import { Row, Table } from "@tanstack/react-table";
 import { useLayoutsStore } from "../../store/use-layouts-store"
 import { TableLayout } from "../layouts/table-layout";
 import { useEffect } from "react";
-import { GroupingProps } from "../../types";
-
 interface Props<T> {
   table: Table<T>;
-  groupedData: GroupingProps<T>[];
   filterData: (row: Row<T>) => boolean;
 }
 

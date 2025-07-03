@@ -38,7 +38,7 @@ export const FilterPopover = <T,>({ table }: Props<T>) => {
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="icon" size="icon">
-          <ListFilterIcon className={cn(isFiltering && "text-marine")} />
+          <ListFilterIcon className={cn("size-4.5", isFiltering && "text-marine")} />
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="p-0 w-auto select-none">

@@ -1,7 +1,7 @@
 import { 
   SearchIcon, 
   Settings2Icon, 
-  ZapIcon
+  WorkflowIcon
 } from "lucide-react";
 import {
   useCallback, 
@@ -32,8 +32,6 @@ import { Button } from "@/components/ui/button";
 import { SortPopover } from "@/modules/layouts/ui/components/sort-popover";
 import { FilterPopover } from "@/modules/layouts/ui/components/filter-popover";
 import { ViewOptionsSidebar } from "@/modules/layouts/ui/components/view-options-sidebar";
-import { GroupingProps } from "../../types";
-import { DragEndEvent } from "@dnd-kit/core";
 
 interface Props<T> {
   tabLists: {
@@ -42,15 +40,7 @@ interface Props<T> {
   }[];
   table: Table<T>;
   value: string;
-  hasAllHide: boolean;
-  groupedData: GroupingProps<T>[];
-  visibilityManager: {
-    hideGroup: (groupLabel: string) => void;
-    showGroup: (groupLabel: string) => void;
-    toggleAllGroups: () => void;
-  },
   onClear: () => void;
-  onDragEnd: (e: DragEndEvent) => void;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 } 
 
@@ -58,11 +48,7 @@ export const Toolbar = <T,>({
   table,
   tabLists,
   value,
-  hasAllHide,
-  groupedData,
-  visibilityManager,
   onChange,
-  onDragEnd,
   onClear
 }: Props<T>) => {
   const [position, setPosition] = useState({ top: 0, left: 0 });
@@ -109,11 +95,11 @@ export const Toolbar = <T,>({
             <FilterPopover table={table} />
             <SortPopover table={table} />
             <Button variant="icon" size="icon">
-              <ZapIcon />
+              <WorkflowIcon className="size-4.5" />
             </Button>
 
             <Button variant="icon" size="icon" onClick={toggleSearch}>
-              <SearchIcon />
+              <SearchIcon className="size-4.5" />
             </Button>
             <AnimatePresence>
               {showSearch && (
@@ -148,17 +134,13 @@ export const Toolbar = <T,>({
             >
               <PopoverTrigger asChild>
                 <Button variant="icon" size="icon" onClick={() => setTimeout(() => toggleSidebar(), 50)}>
-                  <Settings2Icon />
+                  <Settings2Icon className="size-4.5" />
                 </Button>
               </PopoverTrigger>
               <ViewOptionsSidebar 
                 table={table}
-                groupedData={groupedData}
                 position={position}
                 onClose={handleClose}
-                onDragEnd={onDragEnd}
-                hasAllHide={hasAllHide}
-                visibilityManager={visibilityManager}
               />
             </Popover>
             <div className="ml-1">

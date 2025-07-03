@@ -7,8 +7,8 @@ import {
   LockKeyholeIcon, 
   MoreHorizontalIcon, 
   TableRowsSplitIcon, 
+  WorkflowIcon, 
   XIcon, 
-  ZapIcon
 } from "lucide-react";
 import type { Table } from "@tanstack/react-table";
 
@@ -113,7 +113,7 @@ export const Main = <T,>({ table }: Props<T>) => {
           />
           <ViewOptionsItem 
             label="Automation"
-            icon={ZapIcon}
+            icon={WorkflowIcon}
           />
           <ViewOptionsItem 
             label="More settings"

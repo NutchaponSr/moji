@@ -49,12 +49,8 @@ export const GroupsView = ({ organizationId }: Props) => {
   const {
     table,
     globalFilter,
-    groupedData,
-    hasAllHide,
-    visibilityManager,
     filterData,
     handleSearchChange,
-    onDragEnd,
     handleClear
   } = useTable({
     data,
@@ -72,12 +68,8 @@ export const GroupsView = ({ organizationId }: Props) => {
         <Toolbar  
           table={table}
           value={globalFilter}
-          groupedData={groupedData}
           onChange={handleSearchChange}
           onClear={handleClear}
-          onDragEnd={onDragEnd}
-          hasAllHide={hasAllHide}
-          visibilityManager={visibilityManager}
           tabLists={years.map((year) => ({
             value: year,
             onChange: () => setQuery({ year }),
@@ -88,7 +80,6 @@ export const GroupsView = ({ organizationId }: Props) => {
             <LayoutsProvider 
               filterData={filterData}
               table={table} 
-              groupedData={groupedData} 
             />
           </section>
         </TabsContent>
