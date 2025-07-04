@@ -8,14 +8,13 @@ import {
 } from "@tanstack/react-table";
 
 import { useGroupingStore } from "@/modules/layouts/store/use-grouping-store";
-import { ColumnType, dateBy, dateSort, GroupingProps, NumericBy, numericSort, selectBy, selectSort, textBy, textSort } from "../types";
+import { GroupingProps } from "../types";
 import { createDefaultGroup, isValidGroupingConfig, groupAndSortData } from "../utils";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 
-export const useGrouping = <T>(table: Table<T>) => {
-  // Store state
+export const useGrouping = () => {
   const grouping = useGroupingStore((state) => state.grouping);
   const groupingSort = useGroupingStore((state) => state.groupingSort);
   const groupingValue = useGroupingStore((state) => state.groupingValue);
@@ -24,78 +23,69 @@ export const useGrouping = <T>(table: Table<T>) => {
   const onChangeOption = useGroupingStore((state) => state.onSetGroupingValue);
   const onChangeSort = useGroupingStore((state) => state.onSetGroupingSort);
 
-  // Computed values
   const isGrouping = grouping !== null;
-  const groupingType = grouping?.columnDef.meta?.variant;
-  const data = useMemo(() => table.getFilteredRowModel().rows.map((row) => row.original), [table]);
+  const groupingType = grouping?.columnDef.meta?.variant; 
 
-  // Grouped data state
-  const [groupedData, setGroupedData] = useState<GroupingProps<T>[]>([]);
-
-  // Utility functions
-  const getGroupingDescription = () => {
-    if (!groupingValue || !groupingType) return "";
-    
-    switch (groupingType) {
-      case "numeric":
-        const numericValue = groupingValue as NumericBy;
-        return `${numericValue.from} to ${numericValue.to}`;
-      case "text":
-      case "date":
-      case "select":
-        const option = getGroupingOptions().find(opt => opt.value === groupingValue);
-        return option?.label || groupingValue.toString();
-      default:
-        return groupingValue.toString();
-    }
-  };
-
-  const getGroupingOptions = (columnType?: ColumnType) => {
-    const type = columnType || groupingType;
-
-    if (!type) return [];
-
-    switch (type) {
-      case "text":
-        return textBy;
-      case "date":
-        return dateBy;
-      case "select":
-        return selectBy;
-      case "numeric":
-        return []; // Numeric uses custom range input
-      default:
-        return [];
-    }
-  };
-
-  const getSortOptions = (columnType?: ColumnType) => {
-    const type = columnType || groupingType;
-    if (!type) return [];
-    switch (type) {
-      case "text":
-        return textSort;
-      case "date":
-        return dateSort;
-      case "select":
-        return selectSort;
-      case "numeric":
-        return numericSort;
-      default:
-        return [];
-    }
-  };
+  // TODO: Handle another groupingType
 
   const isValidGrouping = () => {
     return isGrouping && groupingType !== null;
-  };
+  }
 
-  // Group management callbacks
+  return {
+    isGrouping,
+    grouping,
+    groupingType,
+    groupingValue,
+    groupingSort,
+    isValidGrouping,
+    onSelect,
+    onChangeOption,
+    onChangeSort,
+    onRemove,
+  }
+}
+
+interface Props<T> {
+  table: Table<T>;
+  row: T[];
+  filterData: (row: Row<T>) => boolean;
+}
+
+export const useGroupingTable = <T,>({ table, row, filterData }: Props<T>) => {
+  return useReactTable({
+    data: row,
+    columns: table.getAllColumns().map((col) => col.columnDef),
+    state: {
+      globalFilter: table.getState().globalFilter,
+      columnOrder: table.getState().columnOrder,
+      columnVisibility: table.getState().columnVisibility,
+      sorting: table.getState().sorting,
+    },
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    globalFilterFn: filterData,
+    filterFns: {
+      custom: (row, columnId, filterValue) => {
+        return String(row.getValue(columnId)).toLowerCase().includes(String(filterValue).toLowerCase());
+      },
+    },
+  });
+}
+
+export const useGrouped = <T>(table: Table<T>) => {
+  const { grouping, groupingValue, groupingType, groupingSort, onChangeSort } = useGrouping();
+
+  const data = useMemo(() => table.getFilteredRowModel().rows.map((row) => row.original), [table])
+
+  const [groupedData, setGroupedData] = useState<GroupingProps<T>[]>([]);
+
   const onToggleAll = useCallback(() => {
     setGroupedData(groupedData.map((group) => ({
       ...group,
       hidden: !group.hidden,
-    })));
+    })))
   }, [groupedData]);
 
   const onHide = useCallback((label: string) => {
@@ -110,7 +100,7 @@ export const useGrouping = <T>(table: Table<T>) => {
       ];
     
       return sorted.map((group, idx) => ({ ...group, order: idx }));
-    });
+    })
   }, [groupedData]);
 
   const onShow = useCallback((label: string) => {
@@ -125,7 +115,7 @@ export const useGrouping = <T>(table: Table<T>) => {
       ];
     
       return sorted.map((group, idx) => ({ ...group, order: idx }));
-    });
+    })
   }, [groupedData]);
 
   const onDragEnd = useCallback((event: DragEndEvent) => {
@@ -149,12 +139,8 @@ export const useGrouping = <T>(table: Table<T>) => {
     }
   }, [groupedData, groupingSort, groupingType, onChangeSort]);
 
-  // This will be handled by a separate hook
-
-  // Computed values for grouped data
   const hasAllHide = groupedData.every((f) => f.hidden);
 
-  // Effect to update grouped data when grouping changes
   useEffect(() => {
     if (!grouping || !groupingValue || !groupingSort || !groupingType) {
       setGroupedData(createDefaultGroup(data));
@@ -179,66 +165,11 @@ export const useGrouping = <T>(table: Table<T>) => {
   }, [grouping, groupingValue, groupingType, groupingSort, data]);
 
   return {
-    // Basic grouping state
-    isGrouping,
-    grouping,
-    groupingType,
-    groupingValue,
-    groupingSort,
-    isValidGrouping,
-    
-    // Store actions
-    onSelect,
-    onChangeOption,
-    onChangeSort,
-    onRemove,
-    
-    // Utility functions
-    getSortOptions,
-    getGroupingOptions,
-    getGroupingDescription,
-    
-    // Grouped data management
     groupedData,
     hasAllHide,
     onDragEnd,
     onToggleAll,
     onHide,
-    onShow,
-    
-    // Table creation - use separate hook
-    // createGroupingTable,
-    
-    // Data
-    data,
+    onShow
   };
-};
-
-// Separate hook for table creation
-interface UseGroupingTableProps<T> {
-  table: Table<T>;
-  row: T[];
-  filterData: (row: Row<T>) => boolean;
 }
-
-export const useGroupingTable = <T,>({ table, row, filterData }: UseGroupingTableProps<T>) => {
-  return useReactTable({
-    data: row,
-    columns: table.getAllColumns().map((col) => col.columnDef),
-    state: {
-      globalFilter: table.getState().globalFilter,
-      columnOrder: table.getState().columnOrder,
-      columnVisibility: table.getState().columnVisibility,
-      sorting: table.getState().sorting,
-    },
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    globalFilterFn: filterData,
-    filterFns: {
-      custom: (row, columnId, filterValue) => {
-        return String(row.getValue(columnId)).toLowerCase().includes(String(filterValue).toLowerCase());
-      },
-    },
-  });
-};

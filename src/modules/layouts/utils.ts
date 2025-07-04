@@ -1,4 +1,18 @@
-import { ColumnType, GroupingConfig, GroupingProps, GroupingSort, GroupingValue, NumericBy } from "@/modules/layouts/types";
+import { 
+  ColumnType, 
+  dateSort,
+  dateBy, 
+  GroupingConfig, 
+  GroupingProps, 
+  GroupingSort, 
+  NumericBy, 
+  selectBy, 
+  textBy, 
+  textSort, 
+  numericSort, 
+  selectSort, 
+  GroupingValue 
+} from "@/modules/layouts/types";
 
 export function compareValues(
   value: string | number,
@@ -307,10 +321,44 @@ export const createDefaultGroup = <T>(data: T[]): GroupingProps<T>[] => {
   ];
 };
 
+export const getGroupingOptions = (type: ColumnType) => {
+  if (!type) return [];
+
+  switch (type) {
+    case "text":
+      return textBy;
+    case "date":
+      return dateBy;
+    case "select":
+      return selectBy;
+    case "numeric":
+      return []; // Numeric uses custom range input
+    default:
+      return [];
+  }
+}
+
+export const getSortOptions = (type: ColumnType) => {
+  if (!type) return [];
+
+  switch (type) {
+    case "text":
+      return textSort;
+    case "date":
+      return dateSort;
+    case "select":
+      return selectSort;
+    case "numeric":
+      return numericSort;
+    default:
+      return [];
+  }
+}
+
 /**
  * Get group description for display
  */
-export const getGroupDescription = (
+export const getGroupingDescription = (
   groupingValue: GroupingValue | null,
   columnType: ColumnType | null
 ): string => {
@@ -323,8 +371,6 @@ export const getGroupDescription = (
     case "text":
     case "date":
     case "select":
-      // For these types, groupingValue should be a string that matches option values
-      // You might want to pass the options array to get the proper label
       return groupingValue.toString();
     default:
       return groupingValue.toString();
@@ -341,152 +387,5 @@ export const isValidGroupingConfig = <T>(config: Partial<GroupingConfig<T>>): bo
     config.groupingValue !== null &&
     config.groupingSort !== null &&
     config.data
-  );
-};
-
-/**
- * Toggle visibility of a specific group
- */
-export const toggleGroupVisibility = <T>(
-  GroupingProps: GroupingProps<T>[],
-  groupLabel: string
-): GroupingProps<T>[] => {
-  return GroupingProps.map(group => 
-    group.label === groupLabel 
-      ? { ...group, hidden: !group.hidden }
-      : group
-  );
-};
-
-/**
- * Hide a specific group
- */
-export const hideGroup = <T>(
-  GroupingProps: GroupingProps<T>[],
-  groupLabel: string
-): GroupingProps<T>[] => {
-  // First, mark the group as hidden
-  const updated = GroupingProps.map(group =>
-    group.label === groupLabel ? { ...group, hidden: true } : group
-  );
-
-  // Sort: visible groups first, then hidden ones
-  const sorted = [
-    ...updated.filter(g => !g.hidden),
-    ...updated.filter(g => g.hidden),
-  ];
-
-  // Reassign order
-  return sorted.map((group, idx) => ({ ...group, order: idx }));
-};
-
-/**
- * Show a specific group
- */
-export const showGroup = <T>(
-  GroupingProps: GroupingProps<T>[],
-  groupLabel: string
-): GroupingProps<T>[] => {
-  // First, mark the group as visible
-  const updated = GroupingProps.map(group =>
-    group.label === groupLabel ? { ...group, hidden: false } : group
-  );
-
-  // Sort: visible groups first, then hidden
-  const sorted = [
-    ...updated.filter(g => !g.hidden),
-    ...updated.filter(g => g.hidden),
-  ];
-
-  // Reassign order
-  return sorted.map((group, idx) => ({ ...group, order: idx }));
-};
-
-/**
- * Hide all groups
- */
-export const hideAllGroups = <T>(
-  GroupingProps: GroupingProps<T>[]
-): GroupingProps<T>[] => {
-  return GroupingProps.map(group => ({ ...group, hidden: true }));
-};
-
-/**
- * Show all groups
- */
-export const showAllGroups = <T>(
-  GroupingProps: GroupingProps<T>[]
-): GroupingProps<T>[] => {
-  return GroupingProps.map(group => ({ ...group, hidden: false }));
-};
-
-/**
- * Get only visible groups
- */
-export const getVisibleGroups = <T>(
-  GroupingProps: GroupingProps<T>[]
-): GroupingProps<T>[] => {
-  return GroupingProps.filter(group => !group.hidden);
-};
-
-/**
- * Get only hidden groups
- */
-export const getHiddenGroups = <T>(
-  GroupingProps: GroupingProps<T>[]
-): GroupingProps<T>[] => {
-  return GroupingProps.filter(group => group.hidden);
-};
-
-/**
- * Get visibility stats
- */
-export const getVisibilityStats = <T>(
-  GroupingProps: GroupingProps<T>[]
-): {
-  total: number;
-  visible: number;
-  hidden: number;
-  visibleDataCount: number;
-  hiddenDataCount: number;
-} => {
-  const visible = GroupingProps.filter(group => !group.hidden);
-  const hidden = GroupingProps.filter(group => group.hidden);
-  
-  return {
-    total: GroupingProps.length,
-    visible: visible.length,
-    hidden: hidden.length,
-    visibleDataCount: visible.reduce((sum, group) => sum + group.data.length, 0),
-    hiddenDataCount: hidden.reduce((sum, group) => sum + group.data.length, 0),
-  };
-};
-
-/**
- * Bulk toggle groups by labels
- */
-export const toggleMultipleGroups = <T>(
-  GroupingProps: GroupingProps<T>[],
-  groupLabels: string[]
-): GroupingProps<T>[] => {
-  return GroupingProps.map(group => 
-    groupLabels.includes(group.label)
-      ? { ...group, hidden: !group.hidden }
-      : group
-  );
-};
-
-/**
- * Set visibility for multiple groups
- */
-export const setMultipleGroupsVisibility = <T>(
-  GroupingProps: GroupingProps<T>[],
-  groupLabels: string[],
-  hidden: boolean
-): GroupingProps<T>[] => {
-  return GroupingProps.map(group => 
-    groupLabels.includes(group.label)
-      ? { ...group, hidden }
-      : group
   );
 };

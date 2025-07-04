@@ -34,6 +34,8 @@ export const FilterPopover = <T,>({ table }: Props<T>) => {
     setConnector
   } = useFilter();
 
+  const columns = table.getAllColumns().filter((f) => f.getCanFilter());
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -55,7 +57,7 @@ export const FilterPopover = <T,>({ table }: Props<T>) => {
         {isFiltering && (
           <FilterList
             items={sortedItems}
-            columns={table.getAllColumns()}
+            columns={columns}
             connector={connector}
             onChangeConnector={setConnector}
             onUpdateFilter={updateFilter}
@@ -67,12 +69,17 @@ export const FilterPopover = <T,>({ table }: Props<T>) => {
 
         <div className="flex flex-row items-center p-2 gap-1">
           
-          <AddFilter asChild mode="popover" columns={table.getAllColumns()} onSelect={addFilter}>
-          <Button variant="outline" size="xs">
-            <FunnelPlusIcon className="size-3.5" />
-              Add condition
-            </Button>
-          </AddFilter>
+          <AddFilter 
+            asChild 
+            mode="popover" 
+            columns={columns} 
+            onSelect={addFilter}
+          >
+            <Button variant="outline" size="xs">
+              <FunnelPlusIcon className="size-3.5" />
+                Add condition
+              </Button>
+            </AddFilter>
           <Button 
             size="xs" 
             variant="outline" 

@@ -5,6 +5,7 @@ import * as SheetPrimitive from "@radix-ui/react-dialog"
 
 import { cn } from "@/lib/utils"
 import { ChevronsRightIcon } from "lucide-react"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 
 function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />
@@ -40,7 +41,7 @@ function SheetOverlay({
     <SheetPrimitive.Overlay
       data-slot="sheet-overlay"
       className={cn(
-        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50",
+        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-999",
         className
       )}
       {...props}
@@ -62,9 +63,9 @@ function SheetContent({
       <SheetPrimitive.Content
         data-slot="sheet-content"
         className={cn(
-          "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out fixed z-50 flex flex-col gap-4 transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 focus:outline-none",
+          "bg-popover data-[state=open]:animate-in data-[state=closed]:animate-out fixed z-999 flex flex-col gap-4 transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 focus:outline-none",
           side === "right" &&
-            "data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-3/4 shadow-[0_14px_28px_-6px_rgba(0,0,0,0.1),0_2px_4px_-1px_rgba(0,0,0,0.06),0_0_0_1px_rgba(84,72,49,0.08)]",
+            "data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-3/4 shadow-[0_14px_28px_-6px_rgba(0,0,0,0.1),0_2px_4px_-1px_rgba(0,0,0,0.06),0_0_0_1px_rgba(84,72,49,0.08)] dark:shadow-[0_14px_28px_-6px_rgba(0,0,0,0.2),0_2px_4px_-1px_rgba(0,0,0,0.12),0_0_0_1px_rgba(255,255,255,0.094)]",
           side === "left" &&
             "data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left inset-y-0 left-0 h-full w-3/4 border-r",
           side === "top" &&
@@ -131,6 +132,15 @@ function SheetDescription({
   )
 }
 
+function SheetHidden() {
+  return (
+    <VisuallyHidden>
+      <SheetTitle></SheetTitle>
+      <SheetDescription></SheetDescription>
+    </VisuallyHidden>
+  );
+}
+
 export {
   Sheet,
   SheetTrigger,
@@ -140,4 +150,5 @@ export {
   SheetFooter,
   SheetTitle,
   SheetDescription,
+  SheetHidden,
 }

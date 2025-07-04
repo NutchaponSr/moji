@@ -1,5 +1,5 @@
 import { Row, Table } from "@tanstack/react-table";
-import { useGrouping } from "../../hooks/use-grouping";
+import { useGrouped, useGrouping } from "../../hooks/use-grouping";
 import { Accordion, AccordionItem } from "@/components/ui/accordion";
 import { DataTable } from "../components/data-table";
 import { useState } from "react";
@@ -11,7 +11,8 @@ interface Props<T> {
 }
 
 export const TableLayout = <T,>({ table, ...props }: Props<T>) => {
-  const { isGrouping, groupedData } = useGrouping(table);
+  const { isGrouping } = useGrouping();
+  const { groupedData } = useGrouped(table);
 
   const [values, setValues] = useState<string[]>([]);
 

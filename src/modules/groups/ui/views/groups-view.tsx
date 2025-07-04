@@ -20,6 +20,7 @@ import { group } from "@/modules/layouts/constants";
 
 import { useTable } from "@/modules/layouts/hooks/use-table";
 import { useGroupQuery } from "@/modules/groups/hooks/use-group-query";
+import { SelectMenu } from "@/modules/layouts/ui/components/select-menu";
 
 
 interface Props {
@@ -65,16 +66,19 @@ export const GroupsView = ({ organizationId }: Props) => {
       <Banner workspace={group} />
 
       <Tabs defaultValue={query.year}>
-        <Toolbar  
-          table={table}
-          value={globalFilter}
-          onChange={handleSearchChange}
-          onClear={handleClear}
-          tabLists={years.map((year) => ({
-            value: year,
-            onChange: () => setQuery({ year }),
-          }))}
-        />
+        <div className="px-24 min-h-9 sticky left-0 shrink-0 x-86 w-full">
+          <Toolbar  
+            table={table}
+            value={globalFilter}
+            onChange={handleSearchChange}
+            onClear={handleClear}
+            tabLists={years.map((year) => ({
+              value: year,
+              onChange: () => setQuery({ year }),
+            }))}
+          />
+          <SelectMenu table={table} />
+        </div>
         <TabsContent value={query.year}>
           <section className="grow shrink-0 flex flex-col relative">
             <LayoutsProvider 

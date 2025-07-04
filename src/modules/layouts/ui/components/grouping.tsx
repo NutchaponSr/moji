@@ -1,6 +1,6 @@
 import { useViewOptionsStore } from "@/modules/layouts/store/use-view-options-store";
 import { ViewOptionsContent, ViewOptionsHeader, ViewOptionsItem, ViewOptionsSeparator } from "./view-options";
-import { useGrouping } from "../../hooks/use-grouping";
+import { useGrouped, useGrouping } from "../../hooks/use-grouping";
 import { EyeIcon, EyeOffIcon, GripVerticalIcon, Trash2Icon } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { groupingBy } from "../../constants";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Table } from "@tanstack/react-table";
+import { getGroupingDescription, getGroupingOptions, getSortOptions } from "../../utils";
 interface Props<T> {
   table: Table<T>;
 }
@@ -20,21 +21,21 @@ export const Grouping = <T,>({
 }: Props<T>) => {
   const {
     grouping, 
+    groupingValue,
     groupingType, 
     groupingSort,
-    groupedData,
-    hasAllHide,
-    onToggleAll,
-    onHide,
-    onDragEnd,
-    onShow,
     onRemove, 
-    getSortOptions,
-    getGroupingDescription,
-    getGroupingOptions,
     onChangeOption,
     onChangeSort,
-  } = useGrouping(table);
+  } = useGrouping();
+  const {
+    groupedData,
+    hasAllHide,
+    onDragEnd,
+    onHide,
+    onShow,
+    onToggleAll
+  } = useGrouped(table);
 
   const { viewOptions, onChange, ...props } = useViewOptionsStore();
 
@@ -63,7 +64,7 @@ export const Grouping = <T,>({
             <DropdownMenuTrigger>
               <ViewOptionsItem 
                 label={groupingBy[groupingType].label}
-                description={getGroupingDescription()}
+                description={getGroupingDescription(groupingValue, groupingType)}
                 onClick={() => {}}
               />
             </DropdownMenuTrigger>
