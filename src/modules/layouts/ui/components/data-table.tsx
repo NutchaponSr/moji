@@ -1,10 +1,6 @@
-import { PlusCircleIcon } from "lucide-react";
-import { flexRender, Table } from "@tanstack/react-table";
-
-import { Button } from "@/components/ui/button";
-
+import { flexRender, Table as TB } from "@tanstack/react-table";
 interface Props<T> {
-  table: Table<T>;
+  table: TB<T>;
 }
 
 export const DataTable = <T,>({ table }: Props<T>) => {
@@ -12,11 +8,11 @@ export const DataTable = <T,>({ table }: Props<T>) => {
     <table className="relative w-full overflow-x-auto">
       <thead className="shadow-[inset_0_-1px_0_rgb(233,233,231)] dark:shadow-[inset_0_-1px_0_rgb(47,47,47)] flex bg-background z-87 h-9 text-tertiary min-w-[calc(100%-192px)] left-0 right-0 relative box-border">
       {table.getHeaderGroups().map((headerGroup) => (
-        <tr key={headerGroup.id} className="inline-flex">
+        <tr key={headerGroup.id} className="inline-flex relative">
           {headerGroup.headers.map((header) => (
             <th
               key={header.id}
-              className="flex shrink-0 overflow-hidden text-sm"
+              className="flex shrink-0 overflow-hidden text-sm group/row"
               style={{ width: header.column.columnDef.meta?.width }}
             >
               {header.isPlaceholder
@@ -29,13 +25,13 @@ export const DataTable = <T,>({ table }: Props<T>) => {
       ))}
       </thead>
       <tbody className="relative isolation-auto min-w-[calc(100%-192px)]">
-        {table.getRowModel().rows.length ? (
+        {table.getRowModel().rows.length ? (  
           table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className="w-full border-b border-accent-foreground h-9">
+            <tr key={row.id} className="w-full border-b border-accent-foreground h-9 transition-colors flex relative group/row">
               {row.getVisibleCells().map((cell) => (
                 <td
                   key={cell.id}
-                  className="inline-flex h-full relative border-r border-accent-foreground"
+                  className="border-accent-foreground align-middle whitespace-nowrap not-first:border-r"
                   style={{ width: cell.column.columnDef.meta?.width }}
                 >
                   {flexRender(
@@ -56,14 +52,6 @@ export const DataTable = <T,>({ table }: Props<T>) => {
             </td>
           </tr>
         )}
-        <tr className="flex items-center w-full h-9">
-          <td colSpan={table.getAllColumns().length} className="flex items-center w-full h-full px-0.5 leading-5 gap-1">
-            <Button variant="icon" size="sm">
-              <PlusCircleIcon />
-              New 
-            </Button>
-          </td>
-        </tr>
       </tbody>
     </table>
   ); 

@@ -77,7 +77,7 @@ export const Toolbar = <T,>({
   }, [showSidebar]);
 
   return (
-    <ScrollArea className="px-24 min-h-9 sticky left-0 shrink-0 x-86 w-full">
+    <ScrollArea>
       <div className="flex items-center h-9 left-24 w-full border-b-[1.5px]">
         <TabsList className="flex items-center h-full grow overflow-hidden">
           {tabLists.map((tab) => (

@@ -19,6 +19,7 @@ import {
   ColumnType, 
   Layout, 
   Peek, 
+  PeekType, 
   ViewOptionsType, 
   Workspace 
 } from "@/modules/layouts/types";
@@ -131,26 +132,26 @@ export const layouts: Layout[] = [
   },
 ];
 
-export const peeks: Peek[] = [
-  {
+export const peeks: Record<PeekType, Peek> = {
+  side: {
     default: true,
     slug: "side",
     icon: PanelRightIcon,
     label: "Side peek",
     description: "Open pages on the side. Keeps the view behind interactive.",
   },
-  {
+  center: {
     slug: "center",
     icon: MinimizeIcon,
     label: "Center peek",
     description: "Open pages in a focused, centered modal.",
   },
-  {
+  full: {
     slug: "full",
     icon: MaximizeIcon,
     label: "Full page",
     description: "Open pages in full page",
   },
-];
+}
 
 export const AUTO_WIDTH = ["filter", "sort"];

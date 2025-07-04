@@ -31,8 +31,6 @@ export const Layouts = () => {
   } = useLayoutsStore();
   const { viewOptions, ...props } = useViewOptionsStore();
 
-  const current = peeks.find((p) => p.slug === peek) || peeks[0];
-
   if (viewOptions !== "layouts") return null;
 
   return (
@@ -70,11 +68,11 @@ export const Layouts = () => {
             <DropdownMenuTrigger>
               <ViewOptionsItem 
                 label="Open pages in"
-                description={current.label}
+                description={peeks[peek].label}
               />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="p-1 gap-px flex flex-col relative w-[250px]">
-              {peeks.map((p) => (
+              {Object.values(peeks).map((p) => (
                 <DropdownMenuItem 
                   key={p.slug}
                   onClick={() => onChangePeek(p.slug)}

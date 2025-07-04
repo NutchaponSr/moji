@@ -1,19 +1,21 @@
 import { Command } from "cmdk";
 import { Icon } from "@iconify-icon/react";
+import { Table } from "@tanstack/react-table";
+
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { CommandSearch } from "@/components/command-search";
+
 import { useViewOptionsStore } from "../../store/use-view-options-store"
 import { ViewOptionsContent, ViewOptionsHeader } from "./view-options";
-import { Table } from "@tanstack/react-table";
 import { useGrouping } from "../../hooks/use-grouping";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Props<T> {
   table: Table<T>;
 }
 
 export const AddGrouping = <T,>({ table }: Props<T>) => {
-  const { isGrouping, grouping, onSelect } = useGrouping(table);
+  const { isGrouping, grouping, onSelect } = useGrouping();
   const { viewOptions, onChange, ...props } = useViewOptionsStore();
 
   if (viewOptions !== "addGrouping") return null;
